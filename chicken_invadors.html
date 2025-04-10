@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק חלליות</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Menu -->
+    <nav>
+        <a href="javascript:void(0);" id="goToWelcome">Welcome</a>
+        <a href="javascript:void(0);" id="goToLogin">Login</a>
+        <a href="javascript:void(0);" id="goToRegister">Register</a>
+        <a href="javascript:void(0);" id="goToGame" style="display: none;">Game</a>
+    </nav>
+
+    <!-- Container for all screens -->
+    <div class="container">
+        <!-- Welcome Page -->
+        <div id="welcomeScreen" class="screen welcome-container">
+            <div class="logo-section">
+                <img src="logo.png" alt="Logo" class="logo">
+                <h1>Your Name</h1>
+                <p>ID: 123456789</p>
+            </div>
+
+            <div class="button-section">
+                <button id="registerButton" class="button">Register</button>
+                <button id="loginButton" class="button">Login</button>
+            </div>
+        </div>
+
+        <!-- Registration Form -->
+        <div id="registrationScreen" class="screen registration-container">
+            <h1>Registration</h1>
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="birthDate">Birth Date</label>
+                    <select id="birthYear" name="birthYear" required></select>
+                    <select id="birthMonth" name="birthMonth" required></select>
+                    <select id="birthDay" name="birthDay" required></select>
+                </div>
+                <button type="submit" class="button">Register</button>
+            </form>
+            <p>Already have an account? <a href="javascript:void(0);" id="toLogin">Login here</a></p>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginScreen" class="screen login-container">
+            <h1>Login</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" name="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="loginPassword" required>
+                </div>
+                <button type="submit" class="button">Login</button>
+            </form>
+            <p>Don't have an account? <a href="javascript:void(0);" id="toRegister">Register here</a></p>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen game-container">
+            <div class="game-info">
+                <div class="score">ניקוד: <span id="score">0</span></div>
+                <div class="lives">חיים: <span id="lives">3</span></div>
+            </div>
+            <div id="game-area">
+                <div id="player"></div>
+                <!-- Enemy ships will be created by JavaScript -->
+            </div>
+            <div id="game-over" class="hidden">
+                <h2>המשחק נגמר!</h2>
+                <p>הניקוד הסופי שלך: <span id="final-score">0</span></p>
+                <button id="restart-button">שחק שוב</button>
+            </div>
+            <div id="game-win" class="hidden">
+                <h2>ניצחת!</h2>
+                <p>הניקוד הסופי שלך: <span id="win-score">0</span></p>
+                <button id="restart-win-button">שחק שוב</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="chicken_invadors.js"></script>
+</body>
+</html>
