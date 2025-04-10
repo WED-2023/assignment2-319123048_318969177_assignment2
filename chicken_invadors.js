@@ -1,3 +1,56 @@
+/*
+    TO DO LIST:
+    1) About screen:
+        A screen that will open in a Modal Dialog (a modal window, not a Div, and will contain the names of the submitters), and the game instructions.
+        It should be noted if a Template was used or if a jQuery Plugin was used. 
+        In addition, it should be noted what difficulties you encountered in the exercise. 
+        Exiting the screen will be possible by:
+        - Pressing ESC.
+        - Clicking the X button at the end of the dialog.
+        - Clicking with the mouse outside the dialog. 
+        * Anything else that we want to add to the game should be written in this page:
+        ●	פסילה נוספת.
+        ●	סוג יריות שונה לחללית הטובה לפרק זמן מסוים.
+        ●	ישנו שעון שרץ ומראה את הזמן הנותר לסיום המשחק.
+
+    2) Input test- login+registration: Details of the relevant functions
+    3) Configuration Screen:
+        After logging in, the user will be taken to a configuration screen where he can determine which key 
+        to use to "shoot" with the good spaceship - the user can be allowed to choose from all of the letter keys on the keyboard + spacebar.
+        ● The game time can be set - minimum 2 minutes.
+        ● Additional options can be added that the user can set (such as the colors of the spaceships).
+        ● This screen will have a "Start Game" button that will lead to the game screen.
+    4) Add different types of "bad spaceships" depends on the points each line gives to the player:
+        פגיעה בחללית רעה מהשורה הכי תחתונה (הרביעית ) מזכה ב-5 נקודות , בשורה השלישית – 10 נקודות ,בשורה השנייה – 15 נקודות ובשורה הרביעית 20 נקודות.
+    5) Sound and Effects:
+        -לבחור נושא למשחק ועל פי הנושא לצייר שחקן + חלליות ואת היריות שלהם, כולל רקע ולוגו 
+        -מוזיקת רקע למשחק
+        -צליל פגיעה של השחקן בחללית רעה
+        -צליל פסילה של השחקן
+    6) Points:
+        -כל פגיעה בחללית מעלה את הניקוד בהתאם (בתחילת כל משחק הניקוד הוא 0) 
+        -כל פסילה של השחקן מספר החיים שיש לו יורד בהתאם (בתחילת כל משחק הוא 3)
+        -להפוך את זה החיים של השחקן לעיצוב נורמלי ולא מספרי (לב,חללית...)
+        -לוודא שפסילה (שאינה סיום משחק) לא מאפסת את הניקוד של השחקן
+        - 3 פסילות מסיימות את המשחק או בתום הזמן
+        -At the end of the game, the player's final score will be displayed.
+            If the game ends due to disqualifications, the message "You Lost!" will be displayed. 
+            If it ends due to timeout, then: If the player has scored less than 100 points, 
+            "You can do better" will be written with the number of points he has scored, otherwise it will be written "Winner!"
+            If the game ends because the player has managed to eliminate all the bad spaceships, the message "Champion!" will be displayed.
+        -At the end of the game, the player will be shown his personal highscore table 
+            (the player's game history will be saved and at the end of each game a list will be shown with the score history and his current position 
+            in the table after the last game). If the player changes (a new player arrives) then the previous player's score history is deleted.
+        -An option should be added to "-New Game" that, when clicked, will result in a new game - the previous game (which was stopped in the middle) 
+            will not be saved in the highscore table.
+    7) Read.Me file:
+    שיכיל פירוט על העבודה (כל מה שתרצו שהבודק ידע, על מי האתר וכו'...) + מספר תעודת זהות + קישור למקום בו רץ האתר שלכם.
+    
+    בונוס:
+    לסטודנטים אשר יממשו תנועה אלכסונית של כל האלמנטים במשחק (התנועה של כל החלליות והתנועה של כל היריות).
+
+*/
+
 // Function to hide all screens
 function hideAllScreens() {
     document.querySelectorAll('.screen').forEach(function(screen) {
@@ -11,50 +64,72 @@ function showScreen(screenId) {
     document.getElementById(screenId).style.display = 'block';
 }
 
-// Navigation logic
+// Show welcome screen initially
+showScreen("welcomeScreen");
+
+// Navigation logic from one screen to the other using the buttons
 document.getElementById("goToWelcome").addEventListener("click", function() {
     showScreen("welcomeScreen");
 });
 
 document.getElementById("goToLogin").addEventListener("click", function() {
+    document.getElementById("loginUsername").value = "";
+    document.getElementById("loginPassword").value = "";
     showScreen("loginScreen");
 });
 
 document.getElementById("goToRegister").addEventListener("click", function() {
+    clearRegistrationForm();
     showScreen("registrationScreen");
 });
 
-document.getElementById("goToGame").addEventListener("click", function() {
-    showScreen("gameScreen");
-    // Initialize game when navigating to game screen
-    if (!gameInitialized) {
-        initGame();
-        gameInitialized = true;
-    }
-});
-
-// Show welcome screen initially
-showScreen("welcomeScreen");
 
 // Register page navigation
 document.getElementById("registerButton").addEventListener("click", function() {
+    clearRegistrationForm();
     showScreen("registrationScreen");
 });
 
 document.getElementById("loginButton").addEventListener("click", function() {
+    document.getElementById("loginUsername").value = "";
+    document.getElementById("loginPassword").value = "";
     showScreen("loginScreen");
 });
 
 // To navigate to login page from registration form
 document.getElementById("toLogin").addEventListener("click", function() {
+    document.getElementById("loginUsername").value = "";
+    document.getElementById("loginPassword").value = "";
     showScreen("loginScreen");
 });
 
 // To navigate to registration form from login page
 document.getElementById("toRegister").addEventListener("click", function() {
+    clearRegistrationForm();
     showScreen("registrationScreen");
 });
 
+// A function to clear the register form so when the user click it again all the text boxes will be empty
+function clearRegistrationForm() {
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+    document.getElementById("confirmPassword").value = "";
+    document.getElementById("firstName").value = "";
+    document.getElementById("lastName").value = "";
+    document.getElementById("email").value = "";
+
+    // Reset birth date dropdowns to first option
+    document.getElementById("birthYear").selectedIndex = 0;
+    document.getElementById("birthMonth").selectedIndex = 0;
+    populateDays(); // Refresh day list
+    document.getElementById("birthDay").selectedIndex = 0;
+}
+
+/*
+    TO DO - add input tests
+    1) There should be an array of users and passwords. This array should be built and initialize when the page is loaded.
+    2) check if the username and password is in the "DB"
+*/
 // Login form validation (for now, hardcoded username and password)
 document.getElementById("loginForm").addEventListener("submit", function(event) {
     event.preventDefault();
@@ -66,20 +141,35 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
     const validPassword = "testuser";
 
     if (username === validUsername && password === validPassword) {
-        alert("Login successful! Redirecting to game...");
         // Show game screen after successful login
-        showScreen("gameScreen");
-        document.getElementById("goToGame").style.display = "block";
-        
-        // Initialize game when first loading game screen
-        if (!gameInitialized) {
-            initGame();
-            gameInitialized = true;
-        }
+        setTimeout(() => {
+            showScreen("gameScreen");
+            // Initialize game when first loading game screen
+            if (!gameInitialized) {
+                initGame();
+                gameInitialized = true;
+            }
+    
+            // Remove message after transition
+            loginMsg.remove();
+        }, 500);
     } else {
         alert("Invalid credentials, please try again.");
     }
 });
+
+
+/*
+    TO DO- add the input test to the registration form:
+    1) Check that all fields are filled in
+    2) check that the password includes numbers and letters (at least 8)
+    3) check that the first name and last name do not include numbers
+    4) check that the email is valid
+    5) check that the password and password verification fields are identical - this is already happaning.
+    Bonus:
+    6) The birth date- for monthes with 31, for monthes with 30, and february seperate
+    7) That there is no other user with this username in the "DB"
+*/
 
 // Registration form validation
 document.getElementById("registrationForm").addEventListener("submit", function(event) {
@@ -242,7 +332,7 @@ function clearGameElements() {
     enemies = [];
 }
 
-// Create enemy ships
+//Create enemy ships
 function createEnemies() {
     // Total width and height for the enemy grid
     const totalEnemyWidth = ENEMY_COLS * (ENEMY_WIDTH + ENEMY_PADDING) - ENEMY_PADDING;
@@ -252,7 +342,7 @@ function createEnemies() {
     for (let row = 0; row < ENEMY_ROWS; row++) {
         for (let col = 0; col < ENEMY_COLS; col++) {
             const enemy = document.createElement('div');
-            enemy.className = 'enemy';
+            enemy.className = 'enemy chicken';
             gameArea.appendChild(enemy);
 
             const x = startX + col * (ENEMY_WIDTH + ENEMY_PADDING);
@@ -272,7 +362,39 @@ function createEnemies() {
             });
         }
     }
+
+//     // Create enemy ships (chickens)
+// function createEnemies() {
+//     // Total width and height for the enemy grid
+//     const totalEnemyWidth = ENEMY_COLS * (ENEMY_WIDTH + ENEMY_PADDING) - ENEMY_PADDING;
+//     const startX = (GAME_WIDTH - totalEnemyWidth) / 2;
+
+//     // Create enemies in a 4x5 grid
+//     for (let row = 0; row < ENEMY_ROWS; row++) {
+//         for (let col = 0; col < ENEMY_COLS; col++) {
+//             const enemy = document.createElement('div');
+//             enemy.className = 'enemy chicken';
+//             gameArea.appendChild(enemy);
+
+//             const x = startX + col * (ENEMY_WIDTH + ENEMY_PADDING);
+//             const y = ENEMY_TOP_MARGIN + row * (ENEMY_HEIGHT + ENEMY_PADDING);
+
+//             enemy.style.left = `${x}px`;
+//             enemy.style.top = `${y}px`;
+
+//             // Store enemy properties
+//             enemies.push({
+//                 x: x,
+//                 y: y,
+//                 width: ENEMY_WIDTH,
+//                 height: ENEMY_HEIGHT,
+//                 element: enemy,
+//                 row: row // To determine score value
+//             });
+//         }
+//     }
 }
+
 
 // Game loop
 function gameLoop() {
