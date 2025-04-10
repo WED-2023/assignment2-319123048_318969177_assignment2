@@ -272,6 +272,44 @@ yearSelect.addEventListener('change', populateDays);
 // Initialize the days when month or year is selected
 populateDays();
 
+
+// about-modal.js
+
+$(document).ready(function() {
+    // מציג את המודאל בלחיצה על הכפתור
+    $("#openAboutBtn").click(function() {
+        $("#aboutModal").css("display", "block");
+    });
+    
+    // סוגר את המודאל בלחיצה על X
+    $(".about-close").click(function() {
+        $("#aboutModal").css("display", "none");
+    });
+    
+    // סוגר את המודאל בלחיצה מחוץ לו
+    $(window).click(function(event) {
+        if ($(event.target).is("#aboutModal")) {
+            $("#aboutModal").css("display", "none");
+        }
+    });
+    
+    // סוגר את המודאל בלחיצה על ESC
+    $(document).keydown(function(event) {
+        if (event.keyCode == 27) { // מקש ESC
+            $("#aboutModal").css("display", "none");
+        }
+    });
+});
+
+
+
+
+
+
+
+
+
+
 // GAME CODE STARTS HERE
 let gameInitialized = false;
 

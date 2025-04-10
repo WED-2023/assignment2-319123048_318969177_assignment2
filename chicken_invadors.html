@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>משחק חלליות</title>
@@ -113,6 +114,52 @@
             </div>
         </div>
     </div>
+    <button id="openAboutBtn">אודות</button>
+
+    
+<!-- המודאל עצמו - מומלץ לשים בסוף ה-body, לפני סגירת התגית -->
+<div id="aboutModal" class="about-modal">
+    <div class="about-modal-content">
+        <span class="about-close">&times;</span>
+        <h2>אודות הפרויקט</h2>
+        
+        <div class="submitter-info">
+            <h3>מגישים:</h3>
+            <ul>
+                <li>ישראל ישראלי - 123456789</li>
+                <li>יעקב יעקובי - 987654321</li>
+            </ul>
+        </div>
+        
+        <div class="technical-info">
+            <h3>מידע טכני:</h3>
+            <p><strong>שימוש ב-Template:</strong> לא נעשה שימוש ב-Template חיצוני, הכל נכתב מאפס.</p>
+            <p><strong>שימוש ב-jQuery:</strong> כן, נעשה שימוש ב-jQuery עבור פונקציונליות המודאל.</p>
+            
+            <h3>קשיים בפרויקט:</h3>
+            <p>במהלך העבודה על הפרויקט נתקלנו במספר אתגרים:</p>
+            <ul>
+                <li>אתגרים בהתאמת המודאל למסכים ברזולוציות שונות</li>
+                <li>טיפול במקרי קצה של סגירת המודאל</li>
+                <li>התאמת הממשק לתמיכה בשפה העברית ובכיוון RTL</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <script src="chicken_invadors.js"></script>
 </body>

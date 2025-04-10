@@ -250,3 +250,54 @@ a {
 #restart-button:hover, #restart-win-button:hover {
     background-color: #45a049;
 }
+
+/* about-modal.css */
+
+/* Modal styling */
+.about-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.about-modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    border-radius: 5px;
+    position: relative;
+}
+
+.about-close {
+    color: #aaa;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.about-close:hover,
+.about-close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+.submitter-info {
+    margin-bottom: 15px;
+}
+
+.technical-info {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
