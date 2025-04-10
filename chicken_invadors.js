@@ -62,8 +62,8 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
     const password = document.getElementById("loginPassword").value;
 
     // Hardcoded valid user (for demonstration)
-    const validUsername = "user";
-    const validPassword = "password123";
+    const validUsername = "p";
+    const validPassword = "testuser";
 
     if (username === validUsername && password === validPassword) {
         alert("Login successful! Redirecting to game...");
