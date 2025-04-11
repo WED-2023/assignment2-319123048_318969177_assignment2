@@ -301,3 +301,60 @@ a {
     padding-top: 20px;
     border-top: 1px solid #eee;
 }
+
+/* Configuration Screen Styles */
+.config-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+.config-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.config-form .form-group {
+    margin-bottom: 20px;
+}
+
+.config-form label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.config-form select,
+.config-form input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.config-form input[type="color"] {
+    width: 100px;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#startGameButton {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    width: 100%;
+}
+
+#startGameButton:hover {
+    background-color: #45a049;
+}

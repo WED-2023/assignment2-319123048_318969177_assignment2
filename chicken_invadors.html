@@ -88,6 +88,37 @@
             <p>Don't have an account? <a href="javascript:void(0);" id="toRegister">Register here</a></p>
         </div>
 
+        <!-- Configuration Screen -->
+<div id="configScreen" class="screen config-container">
+    <h1>Game Configuration</h1>
+    <div class="config-form">
+        <div class="form-group">
+            <label for="shootKey">Select Shooting Key:</label>
+            <select id="shootKey" name="shootKey">
+                <option value=" ">Spacebar</option>
+                <!-- Letter keys will be populated by JavaScript -->
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="gameDuration">Game Duration (minutes):</label>
+            <input type="number" id="gameDuration" name="gameDuration" min="2" value="2">
+        </div>
+        
+        <div class="form-group">
+            <label for="playerColor">Player Spaceship Color:</label>
+            <input type="color" id="playerColor" name="playerColor" value="#00ff00">
+        </div>
+        
+        <div class="form-group">
+            <label for="enemyColor">Enemy Spaceship Color:</label>
+            <input type="color" id="enemyColor" name="enemyColor" value="#ff0000">
+        </div>
+        
+        <button id="startGameButton" class="button">Start Game</button>
+    </div>
+</div>
+
         <!-- Game Screen -->
         <div id="gameScreen" class="screen game-container">
             <div class="game-title" style="text-align: center; font-size: 24px; font-weight: bold; color: rgb(104, 104, 104); margin-top: 10px;">

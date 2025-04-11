@@ -752,3 +752,240 @@ document.addEventListener('keydown', (event) => {
 // Restart button event listeners
 restartButton.addEventListener('click', initGame);
 restartWinButton.addEventListener('click', initGame);
+
+
+// Game configuration variables
+let gameConfig = {
+    shootKey: " ", // Default to spacebar
+    gameDuration: 2, // Default to 2 minutes
+    playerColor: "#00ff00", // Default player color (green)
+    enemyColor: "#ff0000", // Default enemy color (red)
+    timer: null, // Game timer
+    timeRemaining: 0, // Time remaining in seconds
+};
+
+// Populate the letter keys in the shooting key dropdown
+function populateShootingKeys() {
+    const shootKeySelect = document.getElementById('shootKey');
+    
+    // Add all letter keys (A-Z)
+    for (let i = 65; i <= 90; i++) {
+        const letter = String.fromCharCode(i);
+        const option = document.createElement('option');
+        option.value = letter.toLowerCase();
+        option.textContent = letter;
+        shootKeySelect.appendChild(option);
+    }
+}
+
+// Initialize the configuration screen
+function initConfigScreen() {
+    populateShootingKeys();
+    
+    // Set default values
+    document.getElementById('shootKey').value = gameConfig.shootKey;
+    document.getElementById('gameDuration').value = gameConfig.gameDuration;
+    document.getElementById('playerColor').value = gameConfig.playerColor;
+    document.getElementById('enemyColor').value = gameConfig.enemyColor;
+    
+    // Add event listener for the start game button
+    document.getElementById('startGameButton').addEventListener('click', function() {
+        // Save the configuration
+        gameConfig.shootKey = document.getElementById('shootKey').value;
+        gameConfig.gameDuration = parseInt(document.getElementById('gameDuration').value);
+        gameConfig.playerColor = document.getElementById('playerColor').value;
+        gameConfig.enemyColor = document.getElementById('enemyColor').value;
+        
+        // Convert minutes to seconds for the timer
+        gameConfig.timeRemaining = gameConfig.gameDuration * 60;
+        
+        // Show the game screen
+        showScreen("gameScreen");
+        
+        // Initialize and start the game
+        if (!gameInitialized) {
+            initGame();
+            gameInitialized = true;
+        } else {
+            resetAndStartGame();
+        }
+    });
+}
+
+// Modify login form handling to go to config screen instead of game screen
+document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const username = document.getElementById("loginUsername").value;
+    const password = document.getElementById("loginPassword").value;
+
+    // Check if username exists in dictionary
+    if (users.hasOwnProperty(username) && users[username] === password) {
+        // Success: Go to configuration screen instead of directly to game
+        setTimeout(() => {
+            showScreen("configScreen");
+            // Remove message (if loginMsg is defined somewhere)
+            if (typeof loginMsg !== "undefined") {
+                loginMsg.remove();
+            }
+        }, 500);
+    } else {
+        alert("Invalid username or password, please try again.");
+    }
+});
+
+// Add game timer functions
+function startGameTimer() {
+    // Clear any existing timer
+    if (gameConfig.timer) {
+        clearInterval(gameConfig.timer);
+    }
+    
+    // Add timer element to game info if it doesn't exist
+    if (!document.getElementById('timer')) {
+        const timerElement = document.createElement('div');
+        timerElement.className = 'timer';
+        timerElement.innerHTML = 'Time: <span id="time-remaining">0:00</span>';
+        document.querySelector('.game-info').appendChild(timerElement);
+    }
+    
+    // Update timer display
+    updateTimerDisplay();
+    
+    // Start the timer
+    gameConfig.timer = setInterval(function() {
+        gameConfig.timeRemaining--;
+        updateTimerDisplay();
+        
+        // Check if time has run out
+        if (gameConfig.timeRemaining <= 0) {
+            clearInterval(gameConfig.timer);
+            handleTimeOut();
+        }
+    }, 1000);
+}
+
+// Update the timer display
+function updateTimerDisplay() {
+    const minutes = Math.floor(gameConfig.timeRemaining / 60);
+    const seconds = gameConfig.timeRemaining % 60;
+    const timeStr = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    document.getElementById('time-remaining').textContent = timeStr;
+}
+
+// Handle game timeout
+function handleTimeOut() {
+    gameRunning = false;
+    clearInterval(gameInterval);
+    clearInterval(speedIncreaseInterval);
+    
+    // Display appropriate message based on score
+    const gameOverElement = document.getElementById('game-over');
+    const finalScoreElement = document.getElementById('final-score');
+    
+    finalScoreElement.textContent = score;
+    
+    const gameOverTitle = gameOverElement.querySelector('h2');
+    if (score < 100) {
+        gameOverTitle.textContent = "You can do better!";
+    } else {
+        gameOverTitle.textContent = "Winner!";
+    }
+    
+    gameOverElement.classList.remove('hidden');
+}
+
+// Modified initGame function to incorporate configuration
+function resetAndStartGame() {
+    // Reset game state
+    clearGameElements();
+    
+    // Reset game variables
+    score = 0;
+    lives = 3;
+    playerBullets = [];
+    enemyBullets = [];
+    gameRunning = true;
+    enemyMoveDirection = 1;
+    enemyMoveSpeed = ENEMY_MOVE_SPEED_INITIAL;
+    speedMultiplier = 1;
+    
+    // Set up player with custom color
+    player = {
+        x: Math.floor(Math.random() * (GAME_WIDTH - PLAYER_WIDTH)),
+        y: GAME_HEIGHT - PLAYER_HEIGHT - 20,
+        width: PLAYER_WIDTH,
+        height: PLAYER_HEIGHT,
+        element: document.getElementById('player')
+    };
+
+    // Apply player color
+    player.element.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 20,90 50,70 80,90" fill="${gameConfig.playerColor.replace("#", "%23")}"/></svg>')`;
+    
+    // Update player position
+    player.element.style.left = `${player.x}px`;
+    player.element.style.bottom = '20px';
+
+    // Create enemies
+    createEnemies();
+
+    // Apply enemy color to all enemies
+    document.querySelectorAll('.enemy').forEach(enemy => {
+        // Only apply color if not using the chicken image
+        if (!enemy.classList.contains('chicken')) {
+            enemy.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 20,30 10,70 50,90 90,70 80,30" fill="${gameConfig.enemyColor.replace("#", "%23")}"/></svg>')`;
+        }
+    });
+
+    // Update UI
+    scoreElement.textContent = score;
+    livesElement.textContent = lives;
+    
+    // Hide game over and win screens
+    gameOverElement.classList.add('hidden');
+    gameWinElement.classList.add('hidden');
+    
+    // Start game loop
+    if (gameInterval) clearInterval(gameInterval);
+    if (speedIncreaseInterval) clearInterval(speedIncreaseInterval);
+    
+    gameInterval = setInterval(gameLoop, 1000 / 60); // 60 FPS
+    speedIncreaseInterval = setInterval(increaseSpeed, 5000); // Every 5 seconds
+    
+    // Start the game timer
+    startGameTimer();
+}
+
+// Modify the keyboard controls to use the configured shooting key
+document.addEventListener('keydown', (event) => {
+    if (!gameRunning) return;
+    
+    const moveStep = 10;
+    
+    switch (event.key) {
+        case 'ArrowLeft':
+            player.x = Math.max(0, player.x - moveStep);
+            break;
+        case 'ArrowRight':
+            player.x = Math.min(GAME_WIDTH - PLAYER_WIDTH, player.x + moveStep);
+            break;
+        case 'ArrowUp':
+            // Restrict to bottom 40% of screen
+            player.y = Math.max(GAME_HEIGHT - PLAYER_AREA_HEIGHT, Math.min(GAME_HEIGHT - PLAYER_HEIGHT, player.y - moveStep));
+            break;
+        case 'ArrowDown':
+            player.y = Math.min(GAME_HEIGHT - PLAYER_HEIGHT, player.y + moveStep);
+            break;
+        case gameConfig.shootKey: // Use the configured shoot key
+            playerShoot();
+            break;
+    }
+    
+    // Update player position
+    player.element.style.left = `${player.x}px`;
+    player.element.style.top = `${player.y}px`;
+});
+
+// Initialize configuration screen when document is ready
+document.addEventListener('DOMContentLoaded', function() {
+    initConfigScreen();
+});
