@@ -1,25 +1,11 @@
 /*
     TO DO LIST:
     1) About screen:
-        A screen that will open in a Modal Dialog (a modal window, not a Div, and will contain the names of the submitters), and the game instructions.
-        It should be noted if a Template was used or if a jQuery Plugin was used. 
-        In addition, it should be noted what difficulties you encountered in the exercise. 
-        Exiting the screen will be possible by:
-        - Pressing ESC.
-        - Clicking the X button at the end of the dialog.
-        - Clicking with the mouse outside the dialog. 
         * Anything else that we want to add to the game should be written in this page:
         ●	פסילה נוספת.
         ●	סוג יריות שונה לחללית הטובה לפרק זמן מסוים.
         ●	ישנו שעון שרץ ומראה את הזמן הנותר לסיום המשחק.
 
-    2) Input test- login+registration: Details of the relevant functions
-    3) Configuration Screen:
-        After logging in, the user will be taken to a configuration screen where he can determine which key 
-        to use to "shoot" with the good spaceship - the user can be allowed to choose from all of the letter keys on the keyboard + spacebar.
-        ● The game time can be set - minimum 2 minutes.
-        ● Additional options can be added that the user can set (such as the colors of the spaceships).
-        ● This screen will have a "Start Game" button that will lead to the game screen.
     4) Add different types of "bad spaceships" depends on the points each line gives to the player:
         פגיעה בחללית רעה מהשורה הכי תחתונה (הרביעית ) מזכה ב-5 נקודות , בשורה השלישית – 10 נקודות ,בשורה השנייה – 15 נקודות ובשורה הרביעית 20 נקודות.
     5) Sound and Effects:
@@ -125,18 +111,12 @@ function clearRegistrationForm() {
     document.getElementById("birthDay").selectedIndex = 0;
 }
 
-    // מילון משתמשים לדוגמה
+// מילון משתמשים לדוגמה
 const users = {
         "p": "testuser"
 };
 
-
-/*
-    TO DO - add input tests
-    1) There should be an array of users and passwords. This array should be built and initialize when the page is loaded.
-    2) check if the username and password is in the "DB"
-*/
-// Login form validation (for now, hardcoded username and password)
+// Login form validation - FIXED VERSION (only one handler)
 document.getElementById("loginForm").addEventListener("submit", function(event) {
     event.preventDefault();
     const username = document.getElementById("loginUsername").value;
@@ -144,15 +124,10 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
 
     // בדיקה אם שם המשתמש קיים במילון
     if (users.hasOwnProperty(username) && users[username] === password) {
-        // הצלחה: המשך למשחק
+        // הצלחה: המשך למסך הקונפיגורציה
         setTimeout(() => {
-            showScreen("gameScreen");
-
-            if (!gameInitialized) {
-                initGame();
-                gameInitialized = true;
-            }
-
+            showScreen("configScreen");
+            
             // הסרת הודעה (אם loginMsg מוגדר איפשהו)
             if (typeof loginMsg !== "undefined") {
                 loginMsg.remove();
@@ -162,20 +137,6 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
         alert("שם משתמש או סיסמה שגויים, נסה שוב.");
     }
 });
-
-
-
-/*
-    TO DO- add the input test to the registration form:
-    1) Check that all fields are filled in
-    2) check that the password includes numbers and letters (at least 8)
-    3) check that the first name and last name do not include numbers
-    4) check that the email is valid
-    5) check that the password and password verification fields are identical - this is already happaning.
-    Bonus:
-    6) The birth date- for monthes with 31, for monthes with 30, and february seperate
-    7) That there is no other user with this username in the "DB"
-*/
 
 // Registration form validation
 document.getElementById("registerSubmitButton").addEventListener("click", function () {
@@ -301,15 +262,6 @@ $(document).ready(function() {
     });
 });
 
-
-
-
-
-
-
-
-
-
 // GAME CODE STARTS HERE
 let gameInitialized = false;
 
@@ -402,6 +354,9 @@ function initGame() {
     
     gameInterval = setInterval(gameLoop, 1000 / 60); // 60 FPS
     speedIncreaseInterval = setInterval(increaseSpeed, 5000); // Every 5 seconds
+    
+    // Start the game timer
+    startGameTimer();
 }
 
 // Clear game elements
@@ -443,39 +398,7 @@ function createEnemies() {
             });
         }
     }
-
-//     // Create enemy ships (chickens)
-// function createEnemies() {
-//     // Total width and height for the enemy grid
-//     const totalEnemyWidth = ENEMY_COLS * (ENEMY_WIDTH + ENEMY_PADDING) - ENEMY_PADDING;
-//     const startX = (GAME_WIDTH - totalEnemyWidth) / 2;
-
-//     // Create enemies in a 4x5 grid
-//     for (let row = 0; row < ENEMY_ROWS; row++) {
-//         for (let col = 0; col < ENEMY_COLS; col++) {
-//             const enemy = document.createElement('div');
-//             enemy.className = 'enemy chicken';
-//             gameArea.appendChild(enemy);
-
-//             const x = startX + col * (ENEMY_WIDTH + ENEMY_PADDING);
-//             const y = ENEMY_TOP_MARGIN + row * (ENEMY_HEIGHT + ENEMY_PADDING);
-
-//             enemy.style.left = `${x}px`;
-//             enemy.style.top = `${y}px`;
-
-//             // Store enemy properties
-//             enemies.push({
-//                 x: x,
-//                 y: y,
-//                 width: ENEMY_WIDTH,
-//                 height: ENEMY_HEIGHT,
-//                 element: enemy,
-//                 row: row // To determine score value
-//             });
-//         }
-//     }
 }
-
 
 // Game loop
 function gameLoop() {
@@ -705,6 +628,9 @@ function gameOver() {
     clearInterval(gameInterval);
     clearInterval(speedIncreaseInterval);
     
+    // Clear the timer
+    if (gameConfig.timer) clearInterval(gameConfig.timer);
+    
     finalScoreElement.textContent = score;
     gameOverElement.classList.remove('hidden');
 }
@@ -715,44 +641,12 @@ function gameWin() {
     clearInterval(gameInterval);
     clearInterval(speedIncreaseInterval);
     
+    // Clear the timer
+    if (gameConfig.timer) clearInterval(gameConfig.timer);
+    
     winScoreElement.textContent = score;
     gameWinElement.classList.remove('hidden');
 }
-
-// Keyboard controls
-document.addEventListener('keydown', (event) => {
-    if (!gameRunning) return;
-    
-    const moveStep = 10;
-    
-    switch (event.key) {
-        case 'ArrowLeft':
-            player.x = Math.max(0, player.x - moveStep);
-            break;
-        case 'ArrowRight':
-            player.x = Math.min(GAME_WIDTH - PLAYER_WIDTH, player.x + moveStep);
-            break;
-        case 'ArrowUp':
-            // Restrict to bottom 40% of screen
-            player.y = Math.max(GAME_HEIGHT - PLAYER_AREA_HEIGHT, Math.min(GAME_HEIGHT - PLAYER_HEIGHT, player.y - moveStep));
-            break;
-        case 'ArrowDown':
-            player.y = Math.min(GAME_HEIGHT - PLAYER_HEIGHT, player.y + moveStep);
-            break;
-        case ' ': // Spacebar
-            playerShoot();
-            break;
-    }
-    
-    // Update player position
-    player.element.style.left = `${player.x}px`;
-    player.element.style.top = `${player.y}px`;
-});
-
-// Restart button event listeners
-restartButton.addEventListener('click', initGame);
-restartWinButton.addEventListener('click', initGame);
-
 
 // Game configuration variables
 let gameConfig = {
@@ -769,13 +663,13 @@ function populateShootingKeys() {
     const shootKeySelect = document.getElementById('shootKey');
     
     // Add all letter keys (A-Z)
-    for (let i = 65; i <= 90; i++) {
-        const letter = String.fromCharCode(i);
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    letters.forEach(letter => {
         const option = document.createElement('option');
         option.value = letter.toLowerCase();
         option.textContent = letter;
         shootKeySelect.appendChild(option);
-    }
+    });
 }
 
 // Initialize the configuration screen
@@ -790,9 +684,19 @@ function initConfigScreen() {
     
     // Add event listener for the start game button
     document.getElementById('startGameButton').addEventListener('click', function() {
+        // Get the duration value
+        const duration = parseInt(document.getElementById('gameDuration').value);
+        
+        // Validate the duration is at least 2 minutes
+        if (duration < 2) {
+            alert("זמן המשחק חייב להיות לפחות 2 דקות.");
+            document.getElementById('gameDuration').value = 2; // Reset to minimum
+            return; // Stop execution of the function
+        }
+        
         // Save the configuration
         gameConfig.shootKey = document.getElementById('shootKey').value;
-        gameConfig.gameDuration = parseInt(document.getElementById('gameDuration').value);
+        gameConfig.gameDuration = duration;
         gameConfig.playerColor = document.getElementById('playerColor').value;
         gameConfig.enemyColor = document.getElementById('enemyColor').value;
         
@@ -812,26 +716,13 @@ function initConfigScreen() {
     });
 }
 
-// Modify login form handling to go to config screen instead of game screen
-document.getElementById("loginForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const username = document.getElementById("loginUsername").value;
-    const password = document.getElementById("loginPassword").value;
-
-    // Check if username exists in dictionary
-    if (users.hasOwnProperty(username) && users[username] === password) {
-        // Success: Go to configuration screen instead of directly to game
-        setTimeout(() => {
-            showScreen("configScreen");
-            // Remove message (if loginMsg is defined somewhere)
-            if (typeof loginMsg !== "undefined") {
-                loginMsg.remove();
-            }
-        }, 500);
-    } else {
-        alert("Invalid username or password, please try again.");
+// Function to validate minimum duration
+function validateMinDuration(input) {
+    if (input.value < 2) {
+        alert("זמן המשחק חייב להיות לפחות 2 דקות.");
+        input.value = 2;
     }
-});
+}
 
 // Add game timer functions
 function startGameTimer() {
