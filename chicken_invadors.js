@@ -404,17 +404,17 @@ document.getElementById('new-win-game-button').addEventListener('click', functio
 let gameInitialized = false;
 
 // Game constants
-const GAME_WIDTH = 800;
-const GAME_HEIGHT = 600;
+const GAME_WIDTH = 600;
+const GAME_HEIGHT = 450;
 const PLAYER_AREA_HEIGHT = GAME_HEIGHT * 0.4; // 40% of game area for player movement
-const PLAYER_WIDTH = 40;
-const PLAYER_HEIGHT = 40;
-const ENEMY_WIDTH = 35;
-const ENEMY_HEIGHT = 35;
+const PLAYER_WIDTH = 35;
+const PLAYER_HEIGHT = 35;
+const ENEMY_WIDTH = 30;
+const ENEMY_HEIGHT = 30;
 const ENEMY_ROWS = 4;
 const ENEMY_COLS = 5;
-const ENEMY_PADDING = 15;
-const ENEMY_TOP_MARGIN = 40;
+const ENEMY_PADDING = 12;
+const ENEMY_TOP_MARGIN = 30;
 const BULLET_WIDTH = 5;
 const BULLET_HEIGHT = 15;
 const ENEMY_MOVE_SPEED_INITIAL = 2;
@@ -709,8 +709,8 @@ function checkCollisions() {
             bullet.element.remove();
             enemyBullets.splice(i, 1);
             
-            // Reset player position
-            player.x = Math.floor(Math.random() * (GAME_WIDTH - PLAYER_WIDTH));
+            // Reset player to center position instead of random
+            player.x = (GAME_WIDTH - PLAYER_WIDTH) / 2; // Center horizontally
             player.element.style.left = `${player.x}px`;
             
             // Check game over
@@ -798,7 +798,7 @@ function gameWin() {
     gameWinElement.classList.remove('hidden');
 }
 
-// Update initGame to add the new game button
+// Update the initGame function to properly reset the timer
 function initGame() {
     // Reset game state
     clearGameElements();
@@ -814,9 +814,12 @@ function initGame() {
     speedMultiplier = 1;
     scoreSaved = false;
     
+    // Reset the game timer with the configured duration
+    gameConfig.timeRemaining = gameConfig.gameDuration * 60;
+    
     // Set up player
     player = {
-        x: Math.floor(Math.random() * (GAME_WIDTH - PLAYER_WIDTH)),
+        x: (GAME_WIDTH - PLAYER_WIDTH) / 2, // Center horizontally
         y: GAME_HEIGHT - PLAYER_HEIGHT - 20,
         width: PLAYER_WIDTH,
         height: PLAYER_HEIGHT,
@@ -841,6 +844,9 @@ function initGame() {
     // Add the new game button
     addNewGameButton();
     
+    // Create the boundary indicator
+    createBoundaryIndicator();
+    
     // Start game loop
     if (gameInterval) clearInterval(gameInterval);
     if (speedIncreaseInterval) clearInterval(speedIncreaseInterval);
@@ -851,8 +857,47 @@ function initGame() {
     // Start background music if enabled
     playBackgroundMusic();
     
-    // Start the game timer
+    // Start the game timer with the fresh duration
     startGameTimer();
+}
+
+// Update the startGameTimer function to ensure it uses the correct duration
+function startGameTimer() {
+    // Clear any existing timer
+    if (gameConfig.timer) {
+        clearInterval(gameConfig.timer);
+    }
+    
+    // Remove any existing timer elements to prevent duplication
+    const existingTimers = document.querySelectorAll('.timer');
+    existingTimers.forEach(timer => timer.remove());
+    
+    // Add timer element to game info
+    const timerElement = document.createElement('div');
+    timerElement.className = 'timer';
+    timerElement.innerHTML = 'Time: <span id="time-remaining">0:00</span>';
+    document.querySelector('.game-info').appendChild(timerElement);
+    
+    // Ensure we're using the correct time value from game configuration
+    // This is redundant with the reset in initGame but serves as a safeguard
+    if (!gameConfig.timeRemaining || gameConfig.timeRemaining <= 0) {
+        gameConfig.timeRemaining = gameConfig.gameDuration * 60;
+    }
+    
+    // Update timer display
+    updateTimerDisplay();
+    
+    // Start the timer
+    gameConfig.timer = setInterval(function() {
+        gameConfig.timeRemaining--;
+        updateTimerDisplay();
+        
+        // Check if time has run out
+        if (gameConfig.timeRemaining <= 0) {
+            clearInterval(gameConfig.timer);
+            handleTimeOut();
+        }
+    }, 1000);
 }
 
 function createBoundaryIndicator() {
@@ -1095,19 +1140,26 @@ function validateMinDuration(input) {
     }
 }
 
-// Add game timer functions
 function startGameTimer() {
     // Clear any existing timer
     if (gameConfig.timer) {
         clearInterval(gameConfig.timer);
     }
     
-    // Add timer element to game info if it doesn't exist
-    if (!document.getElementById('timer')) {
-        const timerElement = document.createElement('div');
-        timerElement.className = 'timer';
-        timerElement.innerHTML = 'Time: <span id="time-remaining">0:00</span>';
-        document.querySelector('.game-info').appendChild(timerElement);
+    // Remove any existing timer elements to prevent duplication
+    const existingTimers = document.querySelectorAll('.timer');
+    existingTimers.forEach(timer => timer.remove());
+    
+    // Add timer element to game info
+    const timerElement = document.createElement('div');
+    timerElement.className = 'timer';
+    timerElement.innerHTML = 'Time: <span id="time-remaining">0:00</span>';
+    document.querySelector('.game-info').appendChild(timerElement);
+    
+    // Ensure we're using the correct time value from game configuration
+    // This is redundant with the reset in initGame but serves as a safeguard
+    if (!gameConfig.timeRemaining || gameConfig.timeRemaining <= 0) {
+        gameConfig.timeRemaining = gameConfig.gameDuration * 60;
     }
     
     // Update timer display
@@ -1124,6 +1176,19 @@ function startGameTimer() {
             handleTimeOut();
         }
     }, 1000);
+}
+// Also update clearGameElements to remove timer elements
+function clearGameElements() {
+    // Clear all bullets
+    document.querySelectorAll('.bullet, .enemy-bullet, .enemy').forEach(el => el.remove());
+    
+    // Remove any existing timer elements
+    document.querySelectorAll('.timer').forEach(timer => timer.remove());
+    
+    // Reset arrays
+    playerBullets = [];
+    enemyBullets = [];
+    enemies = [];
 }
 
 // Update the timer display
