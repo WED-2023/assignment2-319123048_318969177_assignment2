@@ -417,7 +417,7 @@ const ENEMY_PADDING = 12;
 const ENEMY_TOP_MARGIN = 30;
 const BULLET_WIDTH = 5;
 const BULLET_HEIGHT = 15;
-const ENEMY_MOVE_SPEED_INITIAL = 1.6;
+const ENEMY_MOVE_SPEED_INITIAL = 1;
 const MAX_SPEED_MULTIPLIER = 5; // After 4 accelerations (initial + 4 = 5)
 
 // Game state
@@ -561,7 +561,7 @@ function moveEnemies() {
 function movePlayerBullets() {
     for (let i = playerBullets.length - 1; i >= 0; i--) {
         const bullet = playerBullets[i];
-        bullet.y -= 7; // Bullet speed
+        bullet.y -= 5; // Bullet speed
         bullet.element.style.top = `${bullet.y}px`;
         
         // Remove bullet if it goes out of bounds
@@ -591,14 +591,8 @@ function moveEnemyBullets() {
 function tryEnemyShooting() {
     if (!canEnemyShoot || enemies.length === 0) return;
     
-    // Check if any enemy bullet has traveled 3/4 of the screen
-    const allBulletsPassedThreshold = enemyBullets.every(bullet => {
-        return bullet.y > (GAME_HEIGHT * 0.75);
-    });
-    
-    if (allBulletsPassedThreshold || enemyBullets.length === 0) {
-        canEnemyShoot = true;
-        
+    // If there are no enemy bullets, allow shooting
+    if (enemyBullets.length === 0) {
         // Select a random enemy to shoot
         const randomIndex = Math.floor(Math.random() * enemies.length);
         const shootingEnemy = enemies[randomIndex];
@@ -606,10 +600,20 @@ function tryEnemyShooting() {
         createEnemyBullet(shootingEnemy.x + ENEMY_WIDTH / 2 - BULLET_WIDTH / 2, shootingEnemy.y + ENEMY_HEIGHT);
         
         // Set flag to prevent continuous shooting
-        canEnemyShoot = true;
+        canEnemyShoot = false;
+    } 
+    // Check if all bullets have traveled 3/4 of the screen
+    else if (enemyBullets.every(bullet => bullet.y > (GAME_HEIGHT * 0.75))) {
+        // Select a random enemy to shoot
+        const randomIndex = Math.floor(Math.random() * enemies.length);
+        const shootingEnemy = enemies[randomIndex];
+        
+        createEnemyBullet(shootingEnemy.x + ENEMY_WIDTH / 2 - BULLET_WIDTH / 2, shootingEnemy.y + ENEMY_HEIGHT);
+        
+        // Reset flag to prevent continuous shooting
+        canEnemyShoot = false;
     }
 }
-
 // Create enemy bullet
 function createEnemyBullet(x, y) {
     const bullet = document.createElement('div');

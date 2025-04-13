@@ -583,15 +583,15 @@ input[type="range"]::-moz-range-thumb {
 /* Update game info container to accommodate the button */
 .game-info {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center; /* Change from space-between to center */
+    gap: 30px; /* Add spacing between the elements */
     padding: 10px;
     font-size: 18px;
     background-color: #333;
     color: white;
     border-radius: 10px 10px 0 0;
+    text-align: center; /* Add text alignment */
 }
-
 /* Adjust the game info on smaller screens */
 @media (max-width: 600px) {
     .game-info {
@@ -689,4 +689,33 @@ input[type="range"]::-moz-range-thumb {
         width: 90%;
         max-width: 400px;
     }
+}
+
+/* Update the game-over and game-win elements to position them lower */
+#game-over, #game-win {
+    position: absolute;
+    top: 60%; /* Changed from 50% to 60% to move down */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    z-index: 100;
+    width: 450px; /* Maintain your current width */
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+/* If you want to adjust the high scores table position specifically */
+#high-scores-container, #win-high-scores-container {
+    margin-top: 20px;
+}
+
+/* Make the table slightly more compact if needed */
+.high-scores-table th,
+.high-scores-table td {
+    padding: 6px;
+    font-size: 14px;
 }
