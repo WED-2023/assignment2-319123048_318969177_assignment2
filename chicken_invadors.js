@@ -747,7 +747,58 @@ function increaseSpeed() {
 
 
 
-// Initialize the game
+
+function gameOver(reason = "lives") {
+    stopCurrentGame(true); // true means save the score
+    
+    // Set appropriate game over message
+    const gameOverTitle = document.getElementById('game-over-title');
+    
+    // Determine how the game ended
+    let gameResult = "";
+    
+    if (reason === "lives" || lives <= 0) {
+        gameOverTitle.textContent = "You Lost!";
+        gameResult = "Defeated";
+    } else if (reason === "timeout") {
+        if (score < 100) {
+            gameOverTitle.textContent = "You can do better";
+            gameResult = "Time's up";
+        } else {
+            gameOverTitle.textContent = "Winner!";
+            gameResult = "Victory";
+        }
+    }
+    
+    // Update final score and rank display
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('player-rank').textContent = getRank(score);
+    
+    // Display high scores table
+    document.getElementById('high-scores-table').innerHTML = displayHighScoresTable();
+    
+    // Show game over screen
+    gameOverElement.classList.remove('hidden');
+}
+
+function gameWin() {
+    stopCurrentGame(true); // true means save the score
+    
+    // Set win message
+    document.getElementById('game-win-title').textContent = "Champion!";
+    
+    // Update win score and rank display
+    document.getElementById('win-score').textContent = score;
+    document.getElementById('player-win-rank').textContent = getRank(score);
+    
+    // Display high scores table
+    document.getElementById('win-high-scores-table').innerHTML = displayHighScoresTable();
+    
+    // Show game win screen
+    gameWinElement.classList.remove('hidden');
+}
+
+// Update initGame to add the new game button
 function initGame() {
     // Reset game state
     clearGameElements();
@@ -774,7 +825,7 @@ function initGame() {
 
     // Update player position
     player.element.style.left = `${player.x}px`;
-    player.element.style.bottom = '20px';
+    player.element.style.top = `${player.y}px`;
 
     // Create enemies
     createEnemies();
@@ -786,6 +837,9 @@ function initGame() {
     // Hide game over and win screens
     gameOverElement.classList.add('hidden');
     gameWinElement.classList.add('hidden');
+    
+    // Add the new game button
+    addNewGameButton();
     
     // Start game loop
     if (gameInterval) clearInterval(gameInterval);
@@ -801,93 +855,34 @@ function initGame() {
     startGameTimer();
 }
 
-// Game over
-function gameOver(reason = "lives") {
-    if (gameRunning === false) return; // If already game over, don't process again
-    
-    gameRunning = false;
-    clearInterval(gameInterval);
-    clearInterval(speedIncreaseInterval);
-    
-    // Stop background music
-    stopBackgroundMusic();
-    
-    // Clear the timer
-    if (gameConfig.timer) clearInterval(gameConfig.timer);
-    
-    // If score already saved, don't save again
-    if (!scoreSaved) {
-        scoreSaved = true;
-        
-        // Set appropriate game over message
-        const gameOverTitle = document.getElementById('game-over-title');
-        
-        // Determine how the game ended
-        let gameResult = "";
-        
-        if (reason === "lives" || lives <= 0) {
-            gameOverTitle.textContent = "You Lost!";
-            gameResult = "Defeated";
-        } else if (reason === "timeout") {
-            if (score < 100) {
-                gameOverTitle.textContent = "You can do better";
-                gameResult = "Time's up";
-            } else {
-                gameOverTitle.textContent = "Winner!";
-                gameResult = "Victory";
-            }
-        }
-        
-        // Save high score and get rank
-        const rank = saveHighScore(score, gameResult);
-        
-        // Update final score and rank display
-        document.getElementById('final-score').textContent = score;
-        document.getElementById('player-rank').textContent = rank;
-        
-        // Display high scores table
-        document.getElementById('high-scores-table').innerHTML = displayHighScoresTable();
+function createBoundaryIndicator() {
+    // First, remove any existing boundary indicator
+    const existingIndicator = document.getElementById('player-boundary');
+    if (existingIndicator) {
+        existingIndicator.remove();
     }
     
-    // Show game over screen
-    gameOverElement.classList.remove('hidden');
+    // Create a new boundary indicator element
+    const boundaryIndicator = document.createElement('div');
+    boundaryIndicator.id = 'player-boundary';
+    
+    // Set styles for the boundary line
+    boundaryIndicator.style.position = 'absolute';
+    boundaryIndicator.style.left = '0';
+    boundaryIndicator.style.width = '100%';
+    boundaryIndicator.style.height = '2px';
+    boundaryIndicator.style.backgroundColor = 'rgba(249, 228, 46, 0.3)'; // Subtle yellow line
+    
+    // Position at 60% from the top (where the player area begins)
+    const boundaryPosition = GAME_HEIGHT - PLAYER_AREA_HEIGHT;
+    boundaryIndicator.style.top = `${boundaryPosition}px`;
+    
+    // Add to game area
+    gameArea.appendChild(boundaryIndicator);
 }
 
-// Game win
-function gameWin() {
-    if (gameRunning === false) return; // If already game over, don't process again
-    
-    gameRunning = false;
-    clearInterval(gameInterval);
-    clearInterval(speedIncreaseInterval);
-    
-    // Stop background music
-    stopBackgroundMusic();
-    
-    // Clear the timer
-    if (gameConfig.timer) clearInterval(gameConfig.timer);
-    
-    // If score already saved, don't save again
-    if (!scoreSaved) {
-        scoreSaved = true;
-        
-        // Set win message
-        document.getElementById('game-win-title').textContent = "Champion!";
-        
-        // Save high score and get rank
-        const rank = saveHighScore(score, "Champion");
-        
-        // Update win score and rank display
-        document.getElementById('win-score').textContent = score;
-        document.getElementById('player-win-rank').textContent = rank;
-        
-        // Display high scores table
-        document.getElementById('win-high-scores-table').innerHTML = displayHighScoresTable();
-    }
-    
-    // Show game win screen
-    gameWinElement.classList.remove('hidden');
-}
+
+
 
 // Updated Game configuration variables
 let gameConfig = {
@@ -1145,8 +1140,26 @@ function handleTimeOut() {
 }
 
 
-// Modify the keyboard controls to use the configured keys
+// Modify the keyboard event listener to prevent default browser behavior
 document.addEventListener('keydown', (event) => {
+    // List of keys used for game controls
+    const gameControlKeys = [
+        'ArrowUp', 
+        'ArrowDown', 
+        'ArrowLeft', 
+        'ArrowRight', 
+        ' ', // Spacebar
+        gameConfig.leftKey, 
+        gameConfig.rightKey, 
+        gameConfig.shootKey
+    ];
+    
+    // If the pressed key is used in the game, prevent default browser behavior
+    if (gameControlKeys.includes(event.key)) {
+        event.preventDefault();
+    }
+    
+    // Only process game controls if the game is running
     if (!gameRunning) return;
     
     const moveStep = 10;
@@ -1160,10 +1173,13 @@ document.addEventListener('keydown', (event) => {
         player.x = Math.min(GAME_WIDTH - PLAYER_WIDTH, player.x + moveStep);
     } else if (event.key === 'ArrowUp') {
         // Move up (restricted to bottom 40% of screen)
-        player.y = Math.max(GAME_HEIGHT - PLAYER_AREA_HEIGHT, Math.min(GAME_HEIGHT - PLAYER_HEIGHT, player.y - moveStep));
+        // Calculate the boundary line (60% from top)
+        const upperBoundary = GAME_HEIGHT - PLAYER_AREA_HEIGHT;
+        // Ensure the player doesn't move above the boundary
+        player.y = Math.max(upperBoundary, player.y - moveStep);
     } else if (event.key === 'ArrowDown') {
-        // Move down
-        player.y = Math.min(GAME_HEIGHT - PLAYER_HEIGHT, player.y + moveStep);
+        // Move down (but not off the bottom of the screen)
+        player.y = Math.min(GAME_HEIGHT - PLAYER_HEIGHT - 20, player.y + moveStep);
     } else if (event.key === gameConfig.shootKey) {
         // Shoot
         playerShoot();
@@ -1203,3 +1219,67 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+
+function addNewGameButton() {
+    // Check if button already exists
+    if (document.getElementById('new-game-button-ingame')) {
+        return;
+    }
+    
+    // Create the button
+    const newGameButton = document.createElement('button');
+    newGameButton.id = 'new-game-button-ingame';
+    newGameButton.className = 'ingame-button';
+    newGameButton.textContent = 'משחק חדש';
+    
+    // Add event listener for the button
+    newGameButton.addEventListener('click', function() {
+        // Confirm the user wants to start a new game
+        if (confirm('האם אתה בטוח שברצונך להתחיל משחק חדש? ההתקדמות הנוכחית לא תישמר.')) {
+            // Stop the current game
+            stopCurrentGame(false); // false means don't save the score
+            
+            // Return to the configuration screen
+            showScreen("configScreen");
+        }
+    });
+    
+    // Find a good place to add the button (next to the game info)
+    const gameInfo = document.querySelector('.game-info');
+    gameInfo.appendChild(newGameButton);
+}
+
+// Function to handle stopping the current game
+function stopCurrentGame(saveScore = true) {
+    gameRunning = false;
+    
+    // Clear intervals
+    if (gameInterval) clearInterval(gameInterval);
+    if (speedIncreaseInterval) clearInterval(speedIncreaseInterval);
+    
+    // Stop background music
+    stopBackgroundMusic();
+    
+    // Clear the timer
+    if (gameConfig.timer) clearInterval(gameConfig.timer);
+    
+    // Save the score if requested and not already saved
+    if (saveScore && !scoreSaved) {
+        scoreSaved = true;
+        
+        // Determine game result based on current state
+        let gameResult = "";
+        
+        if (lives <= 0) {
+            gameResult = "Defeated";
+        } else if (enemies.length === 0) {
+            gameResult = "Champion";
+        } else {
+            gameResult = "Abandoned";
+        }
+        
+        // Save high score
+        saveHighScore(score, gameResult);
+    }
+}
