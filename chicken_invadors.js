@@ -1,15 +1,6 @@
 /*
     TO DO LIST:
-    1) About screen:
-        * Anything else that we want to add to the game should be written in this page:
-        ●	פסילה נוספת.
-        ●	סוג יריות שונה לחללית הטובה לפרק זמן מסוים.
-        ●	ישנו שעון שרץ ומראה את הזמן הנותר לסיום המשחק.
-
-    4) Add different types of "bad spaceships" depends on the points each line gives to the player:
-        פגיעה בחללית רעה מהשורה הכי תחתונה (הרביעית ) מזכה ב-5 נקודות , בשורה השלישית – 10 נקודות ,בשורה השנייה – 15 נקודות ובשורה הרביעית 20 נקודות.
     5) Sound and Effects:
-        -לבחור נושא למשחק ועל פי הנושא לצייר שחקן + חלליות ואת היריות שלהם, כולל רקע ולוגו 
         -מוזיקת רקע למשחק
         -צליל פגיעה של השחקן בחללית רעה
         -צליל פסילה של השחקן
@@ -116,24 +107,25 @@ const users = {
         "p": "testuser"
 };
 
-// Login form validation - FIXED VERSION (only one handler)
+// Login form validation 
 document.getElementById("loginForm").addEventListener("submit", function(event) {
     event.preventDefault();
     const username = document.getElementById("loginUsername").value;
     const password = document.getElementById("loginPassword").value;
 
-    // בדיקה אם שם המשתמש קיים במילון
+    // checking if the user is in the dictionary
     if (users.hasOwnProperty(username) && users[username] === password) {
-        // הצלחה: המשך למסך הקונפיגורציה
+        // if yes, move to the configoration screen
         setTimeout(() => {
             showScreen("configScreen");
             
-            // הסרת הודעה (אם loginMsg מוגדר איפשהו)
+            // if there is an error
             if (typeof loginMsg !== "undefined") {
                 loginMsg.remove();
             }
         }, 500);
     } else {
+        // if the user is not in the dictoinary 
         alert("שם משתמש או סיסמה שגויים, נסה שוב.");
     }
 });
@@ -237,26 +229,26 @@ populateDays();
 // about-modal.js
 
 $(document).ready(function() {
-    // מציג את המודאל בלחיצה על הכפתור
+    // open the about screen
     $("#openAboutBtn").click(function() {
         $("#aboutModal").css("display", "block");
     });
     
-    // סוגר את המודאל בלחיצה על X
+    // closing it with the X button
     $(".about-close").click(function() {
         $("#aboutModal").css("display", "none");
     });
     
-    // סוגר את המודאל בלחיצה מחוץ לו
+    // closing it with clicking on anything outside of it
     $(window).click(function(event) {
         if ($(event.target).is("#aboutModal")) {
             $("#aboutModal").css("display", "none");
         }
     });
     
-    // סוגר את המודאל בלחיצה על ESC
+    // closing by clicking on ESC
     $(document).keydown(function(event) {
-        if (event.keyCode == 27) { // מקש ESC
+        if (event.keyCode == 27) { // ESC button in ASCII
             $("#aboutModal").css("display", "none");
         }
     });
@@ -375,34 +367,44 @@ function clearGameElements() {
     enemies = [];
 }
 
-//function to create the enemies spaceships
+/*
+ * Function to create enemy spaceships and place them on the game area.
+ */
 function createEnemies() {
+    // Calculate the total width of the enemies' grid
     const totalEnemyWidth = ENEMY_COLS * (ENEMY_WIDTH + ENEMY_PADDING) - ENEMY_PADDING;
+    
+    // Calculate the starting X position for the first enemy to center them in the game area
     const startX = (GAME_WIDTH - totalEnemyWidth) / 2;
 
+    // Loop through each row and column to create enemies
     for (let row = 0; row < ENEMY_ROWS; row++) {
         for (let col = 0; col < ENEMY_COLS; col++) {
+            // Create a div element for each enemy
             const enemy = document.createElement('div');
-            enemy.className = 'enemy';
-            gameArea.appendChild(enemy);
+            enemy.className = 'enemy'; // Add the 'enemy' class for styling
+            gameArea.appendChild(enemy); // Add the enemy element to the game area
 
+            // Calculate the X and Y positions for the enemy
             const x = startX + col * (ENEMY_WIDTH + ENEMY_PADDING);
             const y = ENEMY_TOP_MARGIN + row * (ENEMY_HEIGHT + ENEMY_PADDING);
 
+            // Set the enemy's position and background image
             enemy.style.left = `${x}px`;
             enemy.style.top = `${y}px`;
-            enemy.style.backgroundImage = `url('${enemyImages[row]}')`;
-            enemy.style.backgroundSize = 'contain';
-            enemy.style.backgroundRepeat = 'no-repeat';
-            enemy.style.backgroundPosition = 'center';
+            enemy.style.backgroundImage = `url('${enemyImages[row]}')`; // Assign image based on row
+            enemy.style.backgroundSize = 'contain'; // Ensure the image fits the enemy element
+            enemy.style.backgroundRepeat = 'no-repeat'; // Prevent image repetition
+            enemy.style.backgroundPosition = 'center'; // Center the image inside the enemy div
 
+            // Push the newly created enemy into the enemies array
             enemies.push({
                 x: x,
                 y: y,
                 width: ENEMY_WIDTH,
                 height: ENEMY_HEIGHT,
                 element: enemy,
-                row: row
+                row: row // Store the row to determine the points awarded when destroyed
             });
         }
     }
