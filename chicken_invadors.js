@@ -145,7 +145,6 @@ function updateHUD() {
     // Update lives
     livesElement.textContent = lives;
     
-    // Update timer (already handled in updateTimerDisplay)
 }
 
 // Registration form validation
@@ -455,57 +454,6 @@ const enemyImages = [
     'photos/orange.png'    // bottom row (index 3)
 ];
 
-// Initialize the game
-// Initialize the game
-function initGame() {
-    // Reset game state
-    clearGameElements();
-    
-    // Reset game variables
-    score = 0;
-    lives = 3;
-    playerBullets = [];
-    enemyBullets = [];
-    gameRunning = true;
-    enemyMoveDirection = 1;
-    enemyMoveSpeed = ENEMY_MOVE_SPEED_INITIAL;
-    speedMultiplier = 1;
-    scoreSaved = false;
-    
-    // Set up player
-    player = {
-        x: Math.floor(Math.random() * (GAME_WIDTH - PLAYER_WIDTH)),
-        y: GAME_HEIGHT - PLAYER_HEIGHT - 20,
-        width: PLAYER_WIDTH,
-        height: PLAYER_HEIGHT,
-        element: document.getElementById('player')
-    };
-
-    // Update player position
-    player.element.style.left = `${player.x}px`;
-    player.element.style.bottom = '20px';
-
-    // Create enemies
-    createEnemies();
-
-    // Update UI
-    scoreElement.textContent = score;
-    livesElement.textContent = lives;
-    
-    // Hide game over and win screens
-    gameOverElement.classList.add('hidden');
-    gameWinElement.classList.add('hidden');
-    
-    // Start game loop
-    if (gameInterval) clearInterval(gameInterval);
-    if (speedIncreaseInterval) clearInterval(speedIncreaseInterval);
-    
-    gameInterval = setInterval(gameLoop, 1000 / 60); // 60 FPS
-    speedIncreaseInterval = setInterval(increaseSpeed, 5000); // Every 5 seconds
-    
-    // Start the game timer
-    startGameTimer();
-}
 
 // Clear game elements
 function clearGameElements() {
@@ -680,10 +628,15 @@ function createEnemyBullet(x, y) {
     });
 }
 
+
 // Player shooting
 function playerShoot() {
     const bullet = document.createElement('div');
     bullet.className = 'bullet';
+    
+    // Apply custom bullet color from game configuration
+    bullet.style.backgroundColor = gameConfig.bulletColor;
+    
     gameArea.appendChild(bullet);
     
     const bulletX = player.x + PLAYER_WIDTH / 2 - BULLET_WIDTH / 2;
@@ -711,6 +664,9 @@ function checkCollisions() {
             const enemy = enemies[j];
             
             if (isColliding(bullet, enemy)) {
+                // Play enemy hit sound effect
+                playSoundEffect('enemyHit');
+                
                 // Calculate score based on enemy row
                 let points;
                 switch (enemy.row) {
@@ -742,6 +698,9 @@ function checkCollisions() {
         const bullet = enemyBullets[i];
         
         if (isColliding(bullet, player)) {
+            // Play player hit sound effect
+            playSoundEffect('playerHit');
+            
             // Player hit
             lives--;
             updateHUD();
@@ -786,6 +745,62 @@ function increaseSpeed() {
     }
 }
 
+
+
+// Initialize the game
+function initGame() {
+    // Reset game state
+    clearGameElements();
+    
+    // Reset game variables
+    score = 0;
+    lives = 3;
+    playerBullets = [];
+    enemyBullets = [];
+    gameRunning = true;
+    enemyMoveDirection = 1;
+    enemyMoveSpeed = ENEMY_MOVE_SPEED_INITIAL;
+    speedMultiplier = 1;
+    scoreSaved = false;
+    
+    // Set up player
+    player = {
+        x: Math.floor(Math.random() * (GAME_WIDTH - PLAYER_WIDTH)),
+        y: GAME_HEIGHT - PLAYER_HEIGHT - 20,
+        width: PLAYER_WIDTH,
+        height: PLAYER_HEIGHT,
+        element: document.getElementById('player')
+    };
+
+    // Update player position
+    player.element.style.left = `${player.x}px`;
+    player.element.style.bottom = '20px';
+
+    // Create enemies
+    createEnemies();
+
+    // Update UI
+    scoreElement.textContent = score;
+    livesElement.textContent = lives;
+    
+    // Hide game over and win screens
+    gameOverElement.classList.add('hidden');
+    gameWinElement.classList.add('hidden');
+    
+    // Start game loop
+    if (gameInterval) clearInterval(gameInterval);
+    if (speedIncreaseInterval) clearInterval(speedIncreaseInterval);
+    
+    gameInterval = setInterval(gameLoop, 1000 / 60); // 60 FPS
+    speedIncreaseInterval = setInterval(increaseSpeed, 5000); // Every 5 seconds
+    
+    // Start background music if enabled
+    playBackgroundMusic();
+    
+    // Start the game timer
+    startGameTimer();
+}
+
 // Game over
 function gameOver(reason = "lives") {
     if (gameRunning === false) return; // If already game over, don't process again
@@ -793,6 +808,9 @@ function gameOver(reason = "lives") {
     gameRunning = false;
     clearInterval(gameInterval);
     clearInterval(speedIncreaseInterval);
+    
+    // Stop background music
+    stopBackgroundMusic();
     
     // Clear the timer
     if (gameConfig.timer) clearInterval(gameConfig.timer);
@@ -843,6 +861,9 @@ function gameWin() {
     clearInterval(gameInterval);
     clearInterval(speedIncreaseInterval);
     
+    // Stop background music
+    stopBackgroundMusic();
+    
     // Clear the timer
     if (gameConfig.timer) clearInterval(gameConfig.timer);
     
@@ -868,22 +889,137 @@ function gameWin() {
     gameWinElement.classList.remove('hidden');
 }
 
-// Game configuration variables
-// Game configuration variables
+// Updated Game configuration variables
 let gameConfig = {
+    leftKey: "ArrowLeft", // Default to left arrow
+    rightKey: "ArrowRight", // Default to right arrow
     shootKey: " ", // Default to spacebar
+    bulletColor: "#FFFF00", // Default to yellow
     gameDuration: 2, // Default to 2 minutes
+    backgroundMusic: true, // Background music enabled by default
+    musicVolume: 50, // Default music volume (0-100)
+    soundEffects: true, // Sound effects enabled by default
+    effectsVolume: 70, // Default effects volume (0-100)
     timer: null, // Game timer
     timeRemaining: 0, // Time remaining in seconds
 };
+
+// Audio elements
+const audioElements = {
+    backgroundMusic: new Audio('sounds/background_music.mp3'),
+    playerHit: new Audio('sounds/player_hit.mp3'),
+    enemyHit: new Audio('sounds/enemy_hit.mp3')
+};
+
+// Initialize audio properties
+function initAudio() {
+    // Set looping for background music
+    audioElements.backgroundMusic.loop = true;
+    
+    // Set initial volumes
+    setMusicVolume(gameConfig.musicVolume);
+    setEffectsVolume(gameConfig.effectsVolume);
+}
+
+// Set music volume
+function setMusicVolume(volume) {
+    const normalizedVolume = volume / 100; // Convert 0-100 to 0-1
+    audioElements.backgroundMusic.volume = normalizedVolume;
+}
+
+// Set effects volume
+function setEffectsVolume(volume) {
+    const normalizedVolume = volume / 100; // Convert 0-100 to 0-1
+    audioElements.playerHit.volume = normalizedVolume;
+    audioElements.enemyHit.volume = normalizedVolume;
+}
+
+// Play a sound effect
+function playSoundEffect(soundName) {
+    if (!gameConfig.soundEffects) return; // Don't play if effects are disabled
+    
+    const sound = audioElements[soundName];
+    if (sound) {
+        // Reset sound to beginning if it's already playing
+        sound.currentTime = 0;
+        sound.play().catch(error => {
+            console.log(`Error playing sound ${soundName}:`, error);
+        });
+    }
+}
+
+// Toggle background music
+function toggleBackgroundMusic() {
+    if (gameConfig.backgroundMusic) {
+        playBackgroundMusic();
+    } else {
+        stopBackgroundMusic();
+    }
+}
+
+// Play background music
+function playBackgroundMusic() {
+    if (!gameConfig.backgroundMusic) return; // Don't play if music is disabled
+    
+    audioElements.backgroundMusic.play().catch(error => {
+        console.log('Error playing background music:', error);
+    });
+}
+
+// Stop background music
+function stopBackgroundMusic() {
+    audioElements.backgroundMusic.pause();
+    audioElements.backgroundMusic.currentTime = 0;
+}
+
 
 // Initialize the configuration screen
 function initConfigScreen() {
     populateShootingKeys();
     
+    // Initialize audio
+    initAudio();
+    
     // Set default values
+    document.getElementById('leftKey').value = gameConfig.leftKey;
+    document.getElementById('rightKey').value = gameConfig.rightKey;
     document.getElementById('shootKey').value = gameConfig.shootKey;
+    document.getElementById('bulletColor').value = gameConfig.bulletColor;
     document.getElementById('gameDuration').value = gameConfig.gameDuration;
+    document.getElementById('backgroundMusic').checked = gameConfig.backgroundMusic;
+    document.getElementById('musicVolume').value = gameConfig.musicVolume;
+    document.getElementById('musicVolumeValue').textContent = `${gameConfig.musicVolume}%`;
+    document.getElementById('soundEffects').checked = gameConfig.soundEffects;
+    document.getElementById('effectsVolume').value = gameConfig.effectsVolume;
+    document.getElementById('effectsVolumeValue').textContent = `${gameConfig.effectsVolume}%`;
+    
+    // Update bullet color preview on change
+    document.getElementById('bulletColor').addEventListener('change', function() {
+        const color = this.value;
+        document.getElementById('bulletColorPreview').style.backgroundColor = color;
+    });
+    
+    // Toggle background music text
+    document.getElementById('backgroundMusic').addEventListener('change', function() {
+        const toggleText = this.parentElement.querySelector('.toggle-text');
+        toggleText.textContent = this.checked ? 'On' : 'Off';
+    });
+    
+    // Toggle sound effects text
+    document.getElementById('soundEffects').addEventListener('change', function() {
+        const toggleText = this.parentElement.querySelector('.toggle-text');
+        toggleText.textContent = this.checked ? 'On' : 'Off';
+    });
+    
+    // Update music volume display
+    document.getElementById('musicVolume').addEventListener('input', function() {
+        document.getElementById('musicVolumeValue').textContent = `${this.value}%`;
+    });
+    
+    // Update effects volume display
+    document.getElementById('effectsVolume').addEventListener('input', function() {
+        document.getElementById('effectsVolumeValue').textContent = `${this.value}%`;
+    });
     
     // Add event listener for the start game button
     document.getElementById('startGameButton').addEventListener('click', function() {
@@ -897,9 +1033,29 @@ function initConfigScreen() {
             return; // Stop execution of the function
         }
         
+        // Check that left and right keys are different
+        const leftKey = document.getElementById('leftKey').value;
+        const rightKey = document.getElementById('rightKey').value;
+        
+        if (leftKey === rightKey) {
+            alert("Please select different keys for left and right movement.");
+            return;
+        }
+        
         // Save the configuration
+        gameConfig.leftKey = leftKey;
+        gameConfig.rightKey = rightKey;
         gameConfig.shootKey = document.getElementById('shootKey').value;
+        gameConfig.bulletColor = document.getElementById('bulletColor').value;
         gameConfig.gameDuration = duration;
+        gameConfig.backgroundMusic = document.getElementById('backgroundMusic').checked;
+        gameConfig.musicVolume = parseInt(document.getElementById('musicVolume').value);
+        gameConfig.soundEffects = document.getElementById('soundEffects').checked;
+        gameConfig.effectsVolume = parseInt(document.getElementById('effectsVolume').value);
+        
+        // Apply sound settings
+        setMusicVolume(gameConfig.musicVolume);
+        setEffectsVolume(gameConfig.effectsVolume);
         
         // Convert minutes to seconds for the timer
         gameConfig.timeRemaining = gameConfig.gameDuration * 60;
@@ -914,6 +1070,9 @@ function initConfigScreen() {
         } else {
             initGame();
         }
+        
+        // Start background music when game starts
+        playBackgroundMusic();
     });
 }
 
@@ -986,29 +1145,28 @@ function handleTimeOut() {
 }
 
 
-// Modify the keyboard controls to use the configured shooting key
+// Modify the keyboard controls to use the configured keys
 document.addEventListener('keydown', (event) => {
     if (!gameRunning) return;
     
     const moveStep = 10;
     
-    switch (event.key) {
-        case 'ArrowLeft':
-            player.x = Math.max(0, player.x - moveStep);
-            break;
-        case 'ArrowRight':
-            player.x = Math.min(GAME_WIDTH - PLAYER_WIDTH, player.x + moveStep);
-            break;
-        case 'ArrowUp':
-            // Restrict to bottom 40% of screen
-            player.y = Math.max(GAME_HEIGHT - PLAYER_AREA_HEIGHT, Math.min(GAME_HEIGHT - PLAYER_HEIGHT, player.y - moveStep));
-            break;
-        case 'ArrowDown':
-            player.y = Math.min(GAME_HEIGHT - PLAYER_HEIGHT, player.y + moveStep);
-            break;
-        case gameConfig.shootKey: // Use the configured shoot key
-            playerShoot();
-            break;
+    // Check which key was pressed
+    if (event.key === gameConfig.leftKey) {
+        // Move left
+        player.x = Math.max(0, player.x - moveStep);
+    } else if (event.key === gameConfig.rightKey) {
+        // Move right
+        player.x = Math.min(GAME_WIDTH - PLAYER_WIDTH, player.x + moveStep);
+    } else if (event.key === 'ArrowUp') {
+        // Move up (restricted to bottom 40% of screen)
+        player.y = Math.max(GAME_HEIGHT - PLAYER_AREA_HEIGHT, Math.min(GAME_HEIGHT - PLAYER_HEIGHT, player.y - moveStep));
+    } else if (event.key === 'ArrowDown') {
+        // Move down
+        player.y = Math.min(GAME_HEIGHT - PLAYER_HEIGHT, player.y + moveStep);
+    } else if (event.key === gameConfig.shootKey) {
+        // Shoot
+        playerShoot();
     }
     
     // Update player position

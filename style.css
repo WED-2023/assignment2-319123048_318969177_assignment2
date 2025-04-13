@@ -401,3 +401,96 @@ a {
     font-size: 18px;
     color: #f9e42e;
 }
+
+/* Sound settings styling */
+.config-form h2 {
+    color: #f9e42e;
+    margin: 30px 0 15px 0;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+/* Toggle switch styling */
+.toggle-container {
+    display: flex;
+    align-items: center;
+}
+
+.toggle-container input[type="checkbox"] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+    position: absolute;
+}
+
+.toggle-label {
+    cursor: pointer;
+    width: 50px;
+    height: 25px;
+    background: #444;
+    display: block;
+    border-radius: 25px;
+    position: relative;
+}
+
+.toggle-label:after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 19px;
+    height: 19px;
+    background: #fff;
+    border-radius: 19px;
+    transition: 0.3s;
+}
+
+input:checked + .toggle-label {
+    background: #f9e42e;
+}
+
+input:checked + .toggle-label:after {
+    left: calc(100% - 3px);
+    transform: translateX(-100%);
+}
+
+.toggle-text {
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+/* Volume slider styling */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 80%;
+    height: 6px;
+    border-radius: 5px;  
+    background: #444;
+    outline: none;
+    margin-right: 10px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%; 
+    background: #f9e42e;
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #f9e42e;
+    cursor: pointer;
+}
+
+#musicVolumeValue, #effectsVolumeValue {
+    font-size: 14px;
+    width: 40px;
+    display: inline-block;
+}
