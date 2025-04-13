@@ -308,6 +308,13 @@ const finalScoreElement = document.getElementById('final-score');
 const winScoreElement = document.getElementById('win-score');
 const restartButton = document.getElementById('restart-button');
 const restartWinButton = document.getElementById('restart-win-button');
+// Update enemy image mapping
+const enemyImages = [
+    'photos/blue.png', // top row (index 0)
+    'photos/red.png',   // second row (index 1)
+    'photos/pink.png',    // third row (index 2)
+    'photos/orange.png'    // bottom row (index 3)
+];
 
 // Initialize the game
 function initGame() {
@@ -368,17 +375,15 @@ function clearGameElements() {
     enemies = [];
 }
 
-//Create enemy ships
+//function to create the enemies spaceships
 function createEnemies() {
-    // Total width and height for the enemy grid
     const totalEnemyWidth = ENEMY_COLS * (ENEMY_WIDTH + ENEMY_PADDING) - ENEMY_PADDING;
     const startX = (GAME_WIDTH - totalEnemyWidth) / 2;
 
-    // Create enemies in a 4x5 grid
     for (let row = 0; row < ENEMY_ROWS; row++) {
         for (let col = 0; col < ENEMY_COLS; col++) {
             const enemy = document.createElement('div');
-            enemy.className = 'enemy chicken';
+            enemy.className = 'enemy';
             gameArea.appendChild(enemy);
 
             const x = startX + col * (ENEMY_WIDTH + ENEMY_PADDING);
@@ -386,20 +391,23 @@ function createEnemies() {
 
             enemy.style.left = `${x}px`;
             enemy.style.top = `${y}px`;
+            enemy.style.backgroundImage = `url('${enemyImages[row]}')`;
+            enemy.style.backgroundSize = 'contain';
+            enemy.style.backgroundRepeat = 'no-repeat';
+            enemy.style.backgroundPosition = 'center';
 
-            // Store enemy properties
             enemies.push({
                 x: x,
                 y: y,
                 width: ENEMY_WIDTH,
                 height: ENEMY_HEIGHT,
                 element: enemy,
-                row: row // To determine score value
+                row: row
             });
         }
     }
 }
-
+    
 // Game loop
 function gameLoop() {
     if (!gameRunning) return;
