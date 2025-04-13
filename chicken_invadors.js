@@ -417,7 +417,7 @@ const ENEMY_PADDING = 12;
 const ENEMY_TOP_MARGIN = 30;
 const BULLET_WIDTH = 5;
 const BULLET_HEIGHT = 15;
-const ENEMY_MOVE_SPEED_INITIAL = 2;
+const ENEMY_MOVE_SPEED_INITIAL = 1.6;
 const MAX_SPEED_MULTIPLIER = 5; // After 4 accelerations (initial + 4 = 5)
 
 // Game state
@@ -745,7 +745,19 @@ function increaseSpeed() {
     }
 }
 
-
+function moveEnemyBullets() {
+    for (let i = enemyBullets.length - 1; i >= 0; i--) {
+        const bullet = enemyBullets[i];
+        bullet.y += 4 * speedMultiplier; // Reduced from 5 to 4 for initial bullet speed
+        bullet.element.style.top = `${bullet.y}px`;
+        
+        // Remove bullet if it goes out of bounds
+        if (bullet.y > GAME_HEIGHT) {
+            bullet.element.remove();
+            enemyBullets.splice(i, 1);
+        }
+    }
+}
 
 
 function gameOver(reason = "lives") {
