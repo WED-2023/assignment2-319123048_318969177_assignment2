@@ -907,8 +907,8 @@ let gameConfig = {
 // Audio elements
 const audioElements = {
     backgroundMusic: new Audio('sounds/background_music.mp3'),
-    playerHit: new Audio('sounds/player_hit.mp3'),
-    enemyHit: new Audio('sounds/enemy_hit.mp3')
+    playerHit: new Audio('sounds/shooting.mp3'),
+    enemyHit: new Audio('sounds/enemy.wav')
 };
 
 // Initialize audio properties
