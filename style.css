@@ -357,3 +357,47 @@ a {
 #startGameButton:hover {
     background-color: #ffe600;
 }
+
+
+/* High score table styles */
+.high-scores-table {
+    width: 100%;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-collapse: collapse;
+    color: white;
+}
+
+.high-scores-table th,
+.high-scores-table td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #f9e42e;
+}
+
+.high-scores-table th {
+    background-color: rgba(249, 228, 46, 0.2);
+    color: #f9e42e;
+}
+
+#game-over, #game-win {
+    width: 450px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.game-over-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.game-over-buttons button {
+    width: 48%;
+}
+
+#player-rank-message, #player-win-rank-message {
+    margin: 10px 0;
+    font-size: 18px;
+    color: #f9e42e;
+}

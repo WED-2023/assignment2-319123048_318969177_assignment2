@@ -115,6 +115,12 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
 
     // checking if the user is in the dictionary
     if (users.hasOwnProperty(username) && users[username] === password) {
+        // Set current player
+        setCurrentPlayer(username);
+        
+        // Clear previous player's scores from memory (not storage)
+        clearPreviousPlayerScores();
+        
         // if yes, move to the configoration screen
         setTimeout(() => {
             showScreen("configScreen");
@@ -129,6 +135,18 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
         alert("שם משתמש או סיסמה שגויים, נסה שוב.");
     }
 });
+
+
+// Function to update the game's HUD (heads-up display)
+function updateHUD() {
+    // Update score
+    scoreElement.textContent = score;
+    
+    // Update lives
+    livesElement.textContent = lives;
+    
+    // Update timer (already handled in updateTimerDisplay)
+}
 
 // Registration form validation
 document.getElementById("registerSubmitButton").addEventListener("click", function () {
@@ -254,6 +272,135 @@ $(document).ready(function() {
     });
 });
 
+// High score management functions
+let currentPlayer = null;
+
+// Function to save current player's username
+function setCurrentPlayer(username) {
+    currentPlayer = username;
+    localStorage.setItem('currentPlayer', username);
+}
+
+// Function to get the current player's username
+function getCurrentPlayer() {
+    if (!currentPlayer) {
+        currentPlayer = localStorage.getItem('currentPlayer');
+    }
+    return currentPlayer;
+}
+
+// Function to save a high score
+function saveHighScore(score, gameResult) {
+    const player = getCurrentPlayer();
+    if (!player) return; // No player logged in
+    
+    // Get existing scores
+    let highScores = getHighScores();
+    
+    // Add new score
+    const newScore = {
+        score: score,
+        date: new Date().toLocaleString(),
+        result: gameResult
+    };
+    
+    highScores.push(newScore);
+    
+    // Sort by score (highest first)
+    highScores.sort((a, b) => b.score - a.score);
+    
+    // Save back to localStorage
+    localStorage.setItem(`highScores_${player}`, JSON.stringify(highScores));
+    
+    return getRank(score);
+}
+
+// Function to get all high scores for current player
+function getHighScores() {
+    const player = getCurrentPlayer();
+    if (!player) return []; // No player logged in
+    
+    const scoresJSON = localStorage.getItem(`highScores_${player}`);
+    return scoresJSON ? JSON.parse(scoresJSON) : [];
+}
+
+// Function to clear high scores when a new player logs in
+function clearPreviousPlayerScores() {
+    // We don't actually delete - we just don't load them
+    // They'll still be in localStorage if the previous player logs back in
+}
+
+// Function to get the rank of a score in the high scores
+function getRank(score) {
+    const scores = getHighScores();
+    return scores.findIndex(s => s.score === score) + 1;
+}
+
+// Function to display high scores table
+function displayHighScoresTable() {
+    const highScores = getHighScores();
+    
+    if (highScores.length === 0) {
+        return '<p>No high scores yet. Play a game!</p>';
+    }
+    
+    let tableHTML = `
+        <table class="high-scores-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Score</th>
+                    <th>Date</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    highScores.forEach((score, index) => {
+        tableHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${score.score}</td>
+                <td>${score.date}</td>
+                <td>${score.result}</td>
+            </tr>
+        `;
+    });
+    
+    tableHTML += `
+            </tbody>
+        </table>
+    `;
+    
+    return tableHTML;
+}
+
+
+
+
+
+// Restart game button handlers
+document.getElementById('restart-button').addEventListener('click', function() {
+    initGame();
+});
+
+document.getElementById('restart-win-button').addEventListener('click', function() {
+    initGame();
+});
+
+// New game button handlers (won't save the score)
+document.getElementById('new-game-button').addEventListener('click', function() {
+    showScreen("configScreen");
+});
+
+document.getElementById('new-win-game-button').addEventListener('click', function() {
+    showScreen("configScreen");
+});
+
+
+
+
 // GAME CODE STARTS HERE
 let gameInitialized = false;
 
@@ -309,6 +456,7 @@ const enemyImages = [
 ];
 
 // Initialize the game
+// Initialize the game
 function initGame() {
     // Reset game state
     clearGameElements();
@@ -322,6 +470,7 @@ function initGame() {
     enemyMoveDirection = 1;
     enemyMoveSpeed = ENEMY_MOVE_SPEED_INITIAL;
     speedMultiplier = 1;
+    scoreSaved = false;
     
     // Set up player
     player = {
@@ -574,7 +723,7 @@ function checkCollisions() {
                 
                 // Update score
                 score += points;
-                scoreElement.textContent = score;
+                updateHUD();
                 
                 // Remove enemy
                 enemy.element.remove();
@@ -595,7 +744,7 @@ function checkCollisions() {
         if (isColliding(bullet, player)) {
             // Player hit
             lives--;
-            livesElement.textContent = lives;
+            updateHUD();
             
             // Remove bullet
             bullet.element.remove();
@@ -607,11 +756,16 @@ function checkCollisions() {
             
             // Check game over
             if (lives <= 0) {
-                gameOver();
+                gameOver("lives");
             }
             
             break;
         }
+    }
+    
+    // Check if all enemies are destroyed
+    if (enemies.length === 0) {
+        gameWin();
     }
 }
 
@@ -633,7 +787,9 @@ function increaseSpeed() {
 }
 
 // Game over
-function gameOver() {
+function gameOver(reason = "lives") {
+    if (gameRunning === false) return; // If already game over, don't process again
+    
     gameRunning = false;
     clearInterval(gameInterval);
     clearInterval(speedIncreaseInterval);
@@ -641,12 +797,48 @@ function gameOver() {
     // Clear the timer
     if (gameConfig.timer) clearInterval(gameConfig.timer);
     
-    finalScoreElement.textContent = score;
+    // If score already saved, don't save again
+    if (!scoreSaved) {
+        scoreSaved = true;
+        
+        // Set appropriate game over message
+        const gameOverTitle = document.getElementById('game-over-title');
+        
+        // Determine how the game ended
+        let gameResult = "";
+        
+        if (reason === "lives" || lives <= 0) {
+            gameOverTitle.textContent = "You Lost!";
+            gameResult = "Defeated";
+        } else if (reason === "timeout") {
+            if (score < 100) {
+                gameOverTitle.textContent = "You can do better";
+                gameResult = "Time's up";
+            } else {
+                gameOverTitle.textContent = "Winner!";
+                gameResult = "Victory";
+            }
+        }
+        
+        // Save high score and get rank
+        const rank = saveHighScore(score, gameResult);
+        
+        // Update final score and rank display
+        document.getElementById('final-score').textContent = score;
+        document.getElementById('player-rank').textContent = rank;
+        
+        // Display high scores table
+        document.getElementById('high-scores-table').innerHTML = displayHighScoresTable();
+    }
+    
+    // Show game over screen
     gameOverElement.classList.remove('hidden');
 }
 
 // Game win
 function gameWin() {
+    if (gameRunning === false) return; // If already game over, don't process again
+    
     gameRunning = false;
     clearInterval(gameInterval);
     clearInterval(speedIncreaseInterval);
@@ -654,33 +846,36 @@ function gameWin() {
     // Clear the timer
     if (gameConfig.timer) clearInterval(gameConfig.timer);
     
-    winScoreElement.textContent = score;
+    // If score already saved, don't save again
+    if (!scoreSaved) {
+        scoreSaved = true;
+        
+        // Set win message
+        document.getElementById('game-win-title').textContent = "Champion!";
+        
+        // Save high score and get rank
+        const rank = saveHighScore(score, "Champion");
+        
+        // Update win score and rank display
+        document.getElementById('win-score').textContent = score;
+        document.getElementById('player-win-rank').textContent = rank;
+        
+        // Display high scores table
+        document.getElementById('win-high-scores-table').innerHTML = displayHighScoresTable();
+    }
+    
+    // Show game win screen
     gameWinElement.classList.remove('hidden');
 }
 
 // Game configuration variables
+// Game configuration variables
 let gameConfig = {
     shootKey: " ", // Default to spacebar
     gameDuration: 2, // Default to 2 minutes
-    playerColor: "#00ff00", // Default player color (green)
-    enemyColor: "#ff0000", // Default enemy color (red)
     timer: null, // Game timer
     timeRemaining: 0, // Time remaining in seconds
 };
-
-// Populate the letter keys in the shooting key dropdown
-function populateShootingKeys() {
-    const shootKeySelect = document.getElementById('shootKey');
-    
-    // Add all letter keys (A-Z)
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    letters.forEach(letter => {
-        const option = document.createElement('option');
-        option.value = letter.toLowerCase();
-        option.textContent = letter;
-        shootKeySelect.appendChild(option);
-    });
-}
 
 // Initialize the configuration screen
 function initConfigScreen() {
@@ -689,8 +884,6 @@ function initConfigScreen() {
     // Set default values
     document.getElementById('shootKey').value = gameConfig.shootKey;
     document.getElementById('gameDuration').value = gameConfig.gameDuration;
-    document.getElementById('playerColor').value = gameConfig.playerColor;
-    document.getElementById('enemyColor').value = gameConfig.enemyColor;
     
     // Add event listener for the start game button
     document.getElementById('startGameButton').addEventListener('click', function() {
@@ -707,8 +900,6 @@ function initConfigScreen() {
         // Save the configuration
         gameConfig.shootKey = document.getElementById('shootKey').value;
         gameConfig.gameDuration = duration;
-        gameConfig.playerColor = document.getElementById('playerColor').value;
-        gameConfig.enemyColor = document.getElementById('enemyColor').value;
         
         // Convert minutes to seconds for the timer
         gameConfig.timeRemaining = gameConfig.gameDuration * 60;
@@ -721,10 +912,26 @@ function initConfigScreen() {
             initGame();
             gameInitialized = true;
         } else {
-            resetAndStartGame();
+            initGame();
         }
     });
 }
+
+// Populate the letter keys in the shooting key dropdown
+function populateShootingKeys() {
+    const shootKeySelect = document.getElementById('shootKey');
+    
+    // Add all letter keys (A-Z)
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    letters.forEach(letter => {
+        const option = document.createElement('option');
+        option.value = letter.toLowerCase();
+        option.textContent = letter;
+        shootKeySelect.appendChild(option);
+    });
+}
+
+
 
 // Function to validate minimum duration
 function validateMinDuration(input) {
@@ -775,86 +982,9 @@ function updateTimerDisplay() {
 
 // Handle game timeout
 function handleTimeOut() {
-    gameRunning = false;
-    clearInterval(gameInterval);
-    clearInterval(speedIncreaseInterval);
-    
-    // Display appropriate message based on score
-    const gameOverElement = document.getElementById('game-over');
-    const finalScoreElement = document.getElementById('final-score');
-    
-    finalScoreElement.textContent = score;
-    
-    const gameOverTitle = gameOverElement.querySelector('h2');
-    if (score < 100) {
-        gameOverTitle.textContent = "You can do better!";
-    } else {
-        gameOverTitle.textContent = "Winner!";
-    }
-    
-    gameOverElement.classList.remove('hidden');
+    gameOver("timeout");
 }
 
-// Modified initGame function to incorporate configuration
-function resetAndStartGame() {
-    // Reset game state
-    clearGameElements();
-    
-    // Reset game variables
-    score = 0;
-    lives = 3;
-    playerBullets = [];
-    enemyBullets = [];
-    gameRunning = true;
-    enemyMoveDirection = 1;
-    enemyMoveSpeed = ENEMY_MOVE_SPEED_INITIAL;
-    speedMultiplier = 1;
-    
-    // Set up player with custom color
-    player = {
-        x: Math.floor(Math.random() * (GAME_WIDTH - PLAYER_WIDTH)),
-        y: GAME_HEIGHT - PLAYER_HEIGHT - 20,
-        width: PLAYER_WIDTH,
-        height: PLAYER_HEIGHT,
-        element: document.getElementById('player')
-    };
-
-    // Apply player color
-    player.element.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 20,90 50,70 80,90" fill="${gameConfig.playerColor.replace("#", "%23")}"/></svg>')`;
-    
-    // Update player position
-    player.element.style.left = `${player.x}px`;
-    player.element.style.bottom = '20px';
-
-    // Create enemies
-    createEnemies();
-
-    // Apply enemy color to all enemies
-    document.querySelectorAll('.enemy').forEach(enemy => {
-        // Only apply color if not using the chicken image
-        if (!enemy.classList.contains('chicken')) {
-            enemy.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 20,30 10,70 50,90 90,70 80,30" fill="${gameConfig.enemyColor.replace("#", "%23")}"/></svg>')`;
-        }
-    });
-
-    // Update UI
-    scoreElement.textContent = score;
-    livesElement.textContent = lives;
-    
-    // Hide game over and win screens
-    gameOverElement.classList.add('hidden');
-    gameWinElement.classList.add('hidden');
-    
-    // Start game loop
-    if (gameInterval) clearInterval(gameInterval);
-    if (speedIncreaseInterval) clearInterval(speedIncreaseInterval);
-    
-    gameInterval = setInterval(gameLoop, 1000 / 60); // 60 FPS
-    speedIncreaseInterval = setInterval(increaseSpeed, 5000); // Every 5 seconds
-    
-    // Start the game timer
-    startGameTimer();
-}
 
 // Modify the keyboard controls to use the configured shooting key
 document.addEventListener('keydown', (event) => {
