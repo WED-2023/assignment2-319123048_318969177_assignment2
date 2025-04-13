@@ -43,11 +43,17 @@
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" required>
+                        <button type="button" class="toggle-password" title="Show password">👁️</button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    <div class="password-container">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <button type="button" class="toggle-password" title="Show password">👁️</button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="firstName">First Name</label>
@@ -63,9 +69,20 @@
                 </div>
                 <div class="form-group">
                     <label for="birthDate">Birth Date</label>
-                    <select id="birthYear" name="birthYear" required></select>
-                    <select id="birthMonth" name="birthMonth" required></select>
-                    <select id="birthDay" name="birthDay" required></select>
+                    <div class="birth-date-container">
+                        <div class="birth-date-field">
+                            <label for="birthDay" class="sub-label">Day</label>
+                            <select id="birthDay" name="birthDay" required></select>
+                        </div>
+                        <div class="birth-date-field">
+                            <label for="birthMonth" class="sub-label">Month</label>
+                            <select id="birthMonth" name="birthMonth" required></select>
+                        </div>
+                        <div class="birth-date-field">
+                            <label for="birthYear" class="sub-label">Year</label>
+                            <select id="birthYear" name="birthYear" required></select>
+                        </div>
+                    </div>
                 </div>
                 <button id="registerSubmitButton" type="button" class="button">Register</button>
             </form>
@@ -270,7 +287,25 @@
     </div>
 </div>
 
-
+<footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-section contact-info">
+            <h3>פרטי התקשרות</h3>
+            <p><strong>אימייל:</strong> contact@spacegame.com</p>
+            <p><strong>טלפון:</strong> 03-1234567</p>
+            <p><strong>כתובת:</strong> רחוב האוניברסיטה 1, תל אביב</p>
+        </div>
+        <div class="footer-section about-site">
+            <h3>אודות האתר</h3>
+            <p>משחק החלליות פותח כפרויקט קורס בתכנות ווב. המשחק מאפשר למשתמשים להתחרות בחלליות אויב ולצבור נקודות.</p>
+            <p>גרסה: 1.0.0</p>
+        </div>
+        <div class="footer-section copyright">
+            <p>© 2023 כל הזכויות שמורות</p>
+            <p>ישראל ישראלי ויעקב יעקובי</p>
+        </div>
+    </div>
+</footer>
 
 
 

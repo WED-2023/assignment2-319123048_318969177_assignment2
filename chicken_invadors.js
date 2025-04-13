@@ -1178,3 +1178,28 @@ document.addEventListener('keydown', (event) => {
 document.addEventListener('DOMContentLoaded', function() {
     initConfigScreen();
 });
+
+// Add event listeners to toggle password visibility
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all password toggle buttons
+    const toggleButtons = document.querySelectorAll('.toggle-password');
+    
+    // Add click event to each button
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Find the input field (previous sibling)
+            const passwordInput = this.parentElement.querySelector('input');
+            
+            // Toggle the type attribute
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = '🔒'; // Change icon to locked
+                this.title = 'Hide password';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = '👁️'; // Change icon to eye
+                this.title = 'Show password';
+            }
+        });
+    });
+});
