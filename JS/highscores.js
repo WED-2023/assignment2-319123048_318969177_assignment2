@@ -1,16 +1,12 @@
-// highscores.js
-// High score and player statistics management
-
-// High score management functions
 let currentPlayer = null;
 
-// Function to save current player's username
+// save username
 function setCurrentPlayer(username) {
     currentPlayer = username;
     localStorage.setItem('currentPlayer', username);
 }
 
-// Function to get the current player's username
+//  get  username
 function getCurrentPlayer() {
     if (!currentPlayer) {
         currentPlayer = localStorage.getItem('currentPlayer');
@@ -18,15 +14,11 @@ function getCurrentPlayer() {
     return currentPlayer;
 }
 
-// Function to save a high score
+//  save a score
 function saveHighScore(score, gameResult) {
     const player = getCurrentPlayer();
-    if (!player) return; // No player logged in
-    
-    // Get existing scores
+
     let highScores = getHighScores();
-    
-    // Add new score
     const newScore = {
         score: score,
         date: new Date().toLocaleString(),
@@ -35,19 +27,18 @@ function saveHighScore(score, gameResult) {
     
     highScores.push(newScore);
     
-    // Sort by score (highest first)
-    highScores.sort((a, b) => b.score - a.score);
+    highScores.sort(function(a, b) {
+        return b.score - a.score;
+      });
     
-    // Save back to localStorage
     localStorage.setItem(`highScores_${player}`, JSON.stringify(highScores));
     
     return getRank(score);
 }
 
-// Function to get all high scores for current player
+//  get history 
 function getHighScores() {
     const player = getCurrentPlayer();
-    if (!player) return []; // No player logged in
     
     const scoresJSON = localStorage.getItem(`highScores_${player}`);
     return scoresJSON ? JSON.parse(scoresJSON) : [];
@@ -59,13 +50,13 @@ function clearPreviousPlayerScores() {
     // They'll still be in localStorage if the previous player logs back in
 }
 
-// Function to get the rank of a score in the high scores
+// rank of the score
 function getRank(score) {
     const scores = getHighScores();
     return scores.findIndex(s => s.score === score) + 1;
 }
 
-// Function to display high scores table
+// show table
 function displayHighScoresTable() {
     const highScores = getHighScores();
     

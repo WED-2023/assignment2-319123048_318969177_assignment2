@@ -1,27 +1,24 @@
-// modal.js
-// About modal functionality
-
 $(document).ready(function() {
     // open the about screen
     $("#openAboutBtn").click(function() {
         $("#aboutModal").css("display", "block");
     });
     
-    // closing it with the X button
+    // close when user click on X
     $(".about-close").click(function() {
         $("#aboutModal").css("display", "none");
     });
     
-    // closing it with clicking on anything outside of it
+    // close when user press outside of the about screen
     $(window).click(function(event) {
         if ($(event.target).is("#aboutModal")) {
             $("#aboutModal").css("display", "none");
         }
     });
     
-    // closing by clicking on ESC
+    // close when user press ESC
     $(document).keydown(function(event) {
-        if (event.keyCode == 27) { // ESC button in ASCII
+        if (event.keyCode == 27) {
             $("#aboutModal").css("display", "none");
         }
     });

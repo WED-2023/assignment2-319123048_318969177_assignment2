@@ -711,10 +711,6 @@
 //     }
 // }
 
-
-// game.js
-// Core game mechanics
-
 // Game initialization flag
 let gameInitialized = false;
 let scoreSaved = false;
