@@ -1,12 +1,9 @@
-// auth.js
-// Handles user authentication, registration, and session management
-
-// Dictionary of sample users
+// dictionary of users
 const users = {
     "p": "testuser"
 };
 
-// A function to clear the register form so when the user click it again all the text boxes will be empty
+// clearing all form values
 function clearRegistrationForm() {
     document.getElementById("username").value = "";
     document.getElementById("password").value = "";
@@ -15,44 +12,34 @@ function clearRegistrationForm() {
     document.getElementById("lastName").value = "";
     document.getElementById("email").value = "";
 
-    // Reset birth date dropdowns to first option
+    // clear BD
     document.getElementById("birthYear").selectedIndex = 0;
     document.getElementById("birthMonth").selectedIndex = 0;
-    populateDays(); // Refresh day list
+    populateDays();
     document.getElementById("birthDay").selectedIndex = 0;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Login form validation 
+    // validate login cardentials 
     document.getElementById("loginForm").addEventListener("submit", function(event) {
         event.preventDefault();
         const username = document.getElementById("loginUsername").value;
         const password = document.getElementById("loginPassword").value;
 
-        // checking if the user is in the dictionary
         if (users.hasOwnProperty(username) && users[username] === password) {
-            // Set current player
             setCurrentPlayer(username);
-            
-            // Clear previous player's scores from memory (not storage)
             clearPreviousPlayerScores();
-            
-            // if yes, move to the configuration screen
             setTimeout(() => {
                 showScreen("configScreen");
-                
-                // if there is an error
                 if (typeof loginMsg !== "undefined") {
                     loginMsg.remove();
                 }
             }, 500);
         } else {
-            // if the user is not in the dictionary 
             alert("שם משתמש או סיסמה שגויים, נסה שוב.");
         }
     });
 
-    // Registration form validation
     document.getElementById("registerSubmitButton").addEventListener("click", function () {
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value;
@@ -64,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const birthMonth = document.getElementById("birthMonth").value;
         const birthDay = document.getElementById("birthDay").value;
 
+        // regex
         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
         const nameRegex = /^[A-Za-z\u0590-\u05FF\s'-]+$/;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -93,31 +81,28 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // if (users[username]) {
-        //     alert("שם המשתמש כבר קיים במערכת.");
-        //     return;
-        // }
+        if (users[username]) {
+            alert("שם המשתמש כבר קיים במערכת.");
+            return;
+        }
 
         users[username] = password;
         alert("נרשמת בהצלחה! כעת תוכל להתחבר.");
         showScreen("loginScreen");
     });
 
-    // Populate birth date selects (year, month, day)
     const yearSelect = document.getElementById('birthYear');
     const monthSelect = document.getElementById('birthMonth');
     const daySelect = document.getElementById('birthDay');
     const currentYear = new Date().getFullYear();
 
-    // Populate years
-    for (let i = currentYear; i >= 1900; i--) {
+    for (let i = currentYear; i >= 1950; i--) {
         let option = document.createElement("option");
         option.value = i;
         option.textContent = i;
         yearSelect.appendChild(option);
     }
 
-    // Populate months
     for (let i = 1; i <= 12; i++) {
         let option = document.createElement("option");
         option.value = i;
@@ -125,37 +110,30 @@ document.addEventListener('DOMContentLoaded', function() {
         monthSelect.appendChild(option);
     }
 
-    // Initialize the days when month or year is selected
     populateDays();
 
     monthSelect.addEventListener('change', populateDays);
     yearSelect.addEventListener('change', populateDays);
-
-    // Add event listeners to toggle password visibility
-    // Get all password toggle buttons
     const toggleButtons = document.querySelectorAll('.toggle-password');
-    
-    // Add click event to each button
+
     toggleButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // Find the input field (previous sibling)
             const passwordInput = this.parentElement.querySelector('input');
             
             // Toggle the type attribute
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                this.textContent = '🔒'; // Change icon to locked
+                this.textContent = '🔒'; 
                 this.title = 'Hide password';
             } else {
                 passwordInput.type = 'password';
-                this.textContent = '👁️'; // Change icon to eye
+                this.textContent = '👁️'; 
                 this.title = 'Show password';
             }
         });
     });
 });
 
-// Populate days based on selected year and month
 function populateDays() {
     const monthSelect = document.getElementById('birthMonth');
     const yearSelect = document.getElementById('birthYear');
