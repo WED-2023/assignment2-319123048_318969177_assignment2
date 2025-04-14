@@ -925,12 +925,18 @@ function initGame() {
 }
 
 // Function to update the game's HUD (heads-up display)
+// Function to update the game's HUD (heads-up display)
 function updateHUD() {
     // Update score
     scoreElement.textContent = score;
     
-    // Update lives
-    livesElement.textContent = lives;
+    // Update lives with hearts
+    livesElement.innerHTML = '';
+    for (let i = 0; i < lives; i++) {
+        const heart = document.createElement('span');
+        heart.className = 'heart-icon';
+        livesElement.appendChild(heart);
+    }
 }
 
 // Clear game elements

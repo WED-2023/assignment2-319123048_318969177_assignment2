@@ -158,3 +158,26 @@
     background-color: rgba(249, 228, 46, 0.2);
     color: #f9e42e;
 }
+
+/* Heart icon styles */
+.heart-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url('photos/heart.png'); /* Create this image or use an alternative */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-right: 4px;
+}
+
+/* If you want to use a CSS heart instead of an image */
+.heart-icon {
+    display: inline-block;
+    color: red;
+    font-size: 20px;
+    margin-right: 4px;
+}
+.heart-icon::before {
+    content: '♥';
+}
