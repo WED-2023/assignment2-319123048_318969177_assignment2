@@ -1073,13 +1073,17 @@ function initConfigScreen() {
     });
     
     // Update music volume display
-    document.getElementById('musicVolume').addEventListener('input', function() {
-        document.getElementById('musicVolumeValue').textContent = `${this.value}%`;
+    document.getElementById('musicVolume').addEventListener('input', function () {
+        const volume = this.value;
+        document.getElementById('musicVolumeValue').textContent = `${volume}%`;
+        setMusicVolume(volume); 
     });
     
     // Update effects volume display
-    document.getElementById('effectsVolume').addEventListener('input', function() {
-        document.getElementById('effectsVolumeValue').textContent = `${this.value}%`;
+    document.getElementById('effectsVolume').addEventListener('input', function () {
+        const volume = this.value;
+        document.getElementById('effectsVolumeValue').textContent = `${volume}%`;
+        setEffectsVolume(volume); 
     });
     
     // Add event listener for the start game button

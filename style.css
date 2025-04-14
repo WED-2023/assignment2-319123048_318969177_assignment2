@@ -77,6 +77,10 @@ nav a:hover {
     margin-bottom: 20px;
 }
 
+.welcome-container h1 {
+    color: white;
+}
+
 h1 {
     font-size: 24px;
     margin-bottom: 10px;
@@ -161,6 +165,13 @@ a {
     color: #f9e42e;
     text-decoration: none;
 }
+
+footer h3,
+footer p {
+    color: black;
+}
+
+
 
 /* Game styles */
 .game-container {
@@ -615,8 +626,14 @@ input[type="range"]::-moz-range-thumb {
         margin-top: 5px;
     }
 }
+/* changing the music bar appearance so it wont be reversed */
+input[type="range"] {
+    transform: rotate(180deg);
+    /* Make sure slider text is aligned correctly */
+    -webkit-appearance: none;
+    appearance: none;
+}
 
-/* Add these CSS rules to make the game screen smaller */
 
 /* Update container max-width */
 .container {
