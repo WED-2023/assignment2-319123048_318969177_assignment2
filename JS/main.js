@@ -1,32 +1,3 @@
-/*
-    TO DO LIST:
-    5) Sound and Effects:
-        -מוזיקת רקע למשחק
-        -צליל פגיעה של השחקן בחללית רעה
-        -צליל פסילה של השחקן
-    6) Points:
-        -כל פגיעה בחללית מעלה את הניקוד בהתאם (בתחילת כל משחק הניקוד הוא 0) 
-        -כל פסילה של השחקן מספר החיים שיש לו יורד בהתאם (בתחילת כל משחק הוא 3)
-        -להפוך את זה החיים של השחקן לעיצוב נורמלי ולא מספרי (לב,חללית...)
-        -לוודא שפסילה (שאינה סיום משחק) לא מאפסת את הניקוד של השחקן
-        - 3 פסילות מסיימות את המשחק או בתום הזמן
-        -At the end of the game, the player's final score will be displayed.
-            If the game ends due to disqualifications, the message "You Lost!" will be displayed. 
-            If it ends due to timeout, then: If the player has scored less than 100 points, 
-            "You can do better" will be written with the number of points he has scored, otherwise it will be written "Winner!"
-            If the game ends because the player has managed to eliminate all the bad spaceships, the message "Champion!" will be displayed.
-        -At the end of the game, the player will be shown his personal highscore table 
-            (the player's game history will be saved and at the end of each game a list will be shown with the score history and his current position 
-            in the table after the last game). If the player changes (a new player arrives) then the previous player's score history is deleted.
-        -An option should be added to "-New Game" that, when clicked, will result in a new game - the previous game (which was stopped in the middle) 
-            will not be saved in the highscore table.
-    7) Read.Me file:
-    שיכיל פירוט על העבודה (כל מה שתרצו שהבודק ידע, על מי האתר וכו'...) + מספר תעודת זהות + קישור למקום בו רץ האתר שלכם.
-    
-    בונוס:
-    לסטודנטים אשר יממשו תנועה אלכסונית של כל האלמנטים במשחק (התנועה של כל החלליות והתנועה של כל היריות).
-
-*/
 
 // Audio elements
 const audioElements = {
@@ -46,7 +17,7 @@ function hideAllScreens() {
 function showScreen(screenId) {
     hideAllScreens();
     document.getElementById(screenId).style.display = 'block';
-
+    //making sure that when it's not Game screen, the music won't play
     if (typeof audioElements !== 'undefined' && audioElements.backgroundMusic) {
         if (screenId !== 'gameScreen') {
             audioElements.backgroundMusic.pause();
