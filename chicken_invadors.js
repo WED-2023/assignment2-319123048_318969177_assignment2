@@ -464,9 +464,9 @@ function clearGameElements() {
     enemies = [];
 }
 
-/*
- * Function to create enemy spaceships and place them on the game area.
- */
+
+ // Function to create enemy spaceships and place them on the game area.
+
 function createEnemies() {
     // Calculate the total width of the enemies' grid
     const totalEnemyWidth = ENEMY_COLS * (ENEMY_WIDTH + ENEMY_PADDING) - ENEMY_PADDING;
@@ -752,9 +752,14 @@ function increaseSpeed() {
 function moveEnemyBullets() {
     for (let i = enemyBullets.length - 1; i >= 0; i--) {
         const bullet = enemyBullets[i];
-        bullet.y += 4 * speedMultiplier; // Reduced from 5 to 4 for initial bullet speed
+        bullet.y += 4 * speedMultiplier;
         bullet.element.style.top = `${bullet.y}px`;
-        
+
+        // ✅ Check if bullet passed 75% of screen height
+        if (bullet.y > GAME_HEIGHT * 0.75) {
+            canEnemyShoot = true;
+        }
+
         // Remove bullet if it goes out of bounds
         if (bullet.y > GAME_HEIGHT) {
             bullet.element.remove();
