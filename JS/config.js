@@ -5,6 +5,8 @@
 let gameConfig = {
     leftKey: "ArrowLeft", // Default to left arrow
     rightKey: "ArrowRight", // Default to right arrow
+    upKey: "ArrowUp", // Default to up arrow
+    downKey: "ArrowDown", // Default to down arrow
     shootKey: " ", // Default to spacebar
     bulletColor: "#FFFF00", // Default to yellow
     gameDuration: 2, // Default to 2 minutes
@@ -18,7 +20,8 @@ let gameConfig = {
 
 // Initialize the configuration screen
 function initConfigScreen() {
-    populateShootingKeys();
+    // Populate all key selection dropdowns
+    populateKeyDropdowns();
     
     // Initialize audio
     initAudio();
@@ -26,6 +29,8 @@ function initConfigScreen() {
     // Set default values
     document.getElementById('leftKey').value = gameConfig.leftKey;
     document.getElementById('rightKey').value = gameConfig.rightKey;
+    document.getElementById('upKey').value = gameConfig.upKey;
+    document.getElementById('downKey').value = gameConfig.downKey;
     document.getElementById('shootKey').value = gameConfig.shootKey;
     document.getElementById('bulletColor').value = gameConfig.bulletColor;
     document.getElementById('gameDuration').value = gameConfig.gameDuration;
@@ -80,19 +85,28 @@ function initConfigScreen() {
             return; // Stop execution of the function
         }
         
-        // Check that left and right keys are different
+        // Check that movement keys are all different
         const leftKey = document.getElementById('leftKey').value;
         const rightKey = document.getElementById('rightKey').value;
+        const upKey = document.getElementById('upKey').value;
+        const downKey = document.getElementById('downKey').value;
+        const shootKey = document.getElementById('shootKey').value;
         
-        if (leftKey === rightKey) {
-            alert("Please select different keys for left and right movement.");
+        // Create an array of keys to check for duplicates
+        const keys = [leftKey, rightKey, upKey, downKey, shootKey];
+        const uniqueKeys = [...new Set(keys)];
+        
+        if (keys.length !== uniqueKeys.length) {
+            alert("Please select different keys for all movement and shooting controls.");
             return;
         }
         
         // Save the configuration
         gameConfig.leftKey = leftKey;
         gameConfig.rightKey = rightKey;
-        gameConfig.shootKey = document.getElementById('shootKey').value;
+        gameConfig.upKey = upKey;
+        gameConfig.downKey = downKey;
+        gameConfig.shootKey = shootKey;
         gameConfig.bulletColor = document.getElementById('bulletColor').value;
         gameConfig.gameDuration = duration;
         gameConfig.backgroundMusic = document.getElementById('backgroundMusic').checked;
@@ -123,17 +137,37 @@ function initConfigScreen() {
     });
 }
 
-// Populate the letter keys in the shooting key dropdown
-function populateShootingKeys() {
-    const shootKeySelect = document.getElementById('shootKey');
+// Populate all key selection dropdowns with letter keys and other options
+function populateKeyDropdowns() {
+    // Get all key dropdown elements
+    const keyDropdowns = [
+        document.getElementById('leftKey'),
+        document.getElementById('rightKey'),
+        document.getElementById('upKey'),
+        document.getElementById('downKey'),
+        document.getElementById('shootKey')
+    ];
     
-    // Add all letter keys (A-Z)
+    // Add spacebar as an option to all dropdowns except for the shoot key (which already has it)
+    keyDropdowns.forEach((dropdown, index) => {
+        if (index !== 4) { // Skip shoot key dropdown which already has spacebar
+            const spaceOption = document.createElement('option');
+            spaceOption.value = " ";
+            spaceOption.textContent = "Spacebar";
+            dropdown.appendChild(spaceOption);
+        }
+    });
+    
+    // Add all letter keys (A-Z) to all dropdowns
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    letters.forEach(letter => {
-        const option = document.createElement('option');
-        option.value = letter.toLowerCase();
-        option.textContent = letter;
-        shootKeySelect.appendChild(option);
+    
+    keyDropdowns.forEach(dropdown => {
+        letters.forEach(letter => {
+            const option = document.createElement('option');
+            option.value = letter.toLowerCase();
+            option.textContent = letter;
+            dropdown.appendChild(option);
+        });
     });
 }
 

@@ -805,6 +805,8 @@ document.addEventListener('keydown', (event) => {
         ' ', // Spacebar
         gameConfig.leftKey, 
         gameConfig.rightKey, 
+        gameConfig.upKey,
+        gameConfig.downKey,
         gameConfig.shootKey
     ];
     
@@ -825,13 +827,13 @@ document.addEventListener('keydown', (event) => {
     } else if (event.key === gameConfig.rightKey) {
         // Move right
         player.x = Math.min(GAME_WIDTH - PLAYER_WIDTH, player.x + moveStep);
-    } else if (event.key === 'ArrowUp') {
+    } else if (event.key === gameConfig.upKey) {
         // Move up (restricted to bottom 40% of screen)
         // Calculate the boundary line (60% from top)
         const upperBoundary = GAME_HEIGHT - PLAYER_AREA_HEIGHT;
         // Ensure the player doesn't move above the boundary
         player.y = Math.max(upperBoundary, player.y - moveStep);
-    } else if (event.key === 'ArrowDown') {
+    } else if (event.key === gameConfig.downKey) {
         // Move down (but not off the bottom of the screen)
         player.y = Math.min(GAME_HEIGHT - PLAYER_HEIGHT - 20, player.y + moveStep);
     } else if (event.key === gameConfig.shootKey) {
@@ -843,7 +845,6 @@ document.addEventListener('keydown', (event) => {
     player.element.style.left = `${player.x}px`;
     player.element.style.top = `${player.y}px`;
 });
-
 // Initialize the game
 function initGame() {
     // Reset game state
