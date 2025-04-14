@@ -28,6 +28,13 @@
 
 */
 
+// Audio elements
+const audioElements = {
+    backgroundMusic: new Audio('sounds/background_music.mp3'),
+    playerHit: new Audio('sounds/shooting.mp3'),
+    enemyHit: new Audio('sounds/enemy.wav')
+};
+
 // Function to hide all screens
 function hideAllScreens() {
     document.querySelectorAll('.screen').forEach(function(screen) {
@@ -39,6 +46,12 @@ function hideAllScreens() {
 function showScreen(screenId) {
     hideAllScreens();
     document.getElementById(screenId).style.display = 'block';
+
+    if (typeof audioElements !== 'undefined' && audioElements.backgroundMusic) {
+        if (screenId !== 'gameScreen') {
+            audioElements.backgroundMusic.pause();
+        }
+    }
 }
 
 // Show welcome screen initially
@@ -965,12 +978,6 @@ let gameConfig = {
     timeRemaining: 0, // Time remaining in seconds
 };
 
-// Audio elements
-const audioElements = {
-    backgroundMusic: new Audio('sounds/background_music.mp3'),
-    playerHit: new Audio('sounds/shooting.mp3'),
-    enemyHit: new Audio('sounds/enemy.wav')
-};
 
 // Initialize audio properties
 function initAudio() {
