@@ -1,5 +1,4 @@
-
-/* Game styles */
+/* Layout and Container Styles */
 .game-container {
     width: 100%;
     height: 100%;
@@ -8,8 +7,9 @@
 .game-info {
     display: flex;
     justify-content: space-between;
-    padding: 10px;
-    font-size: 18px;
+    align-items: center;
+    padding: 5px 10px;
+    font-size: 16px;
     background-color: #333;
     color: white;
     border-radius: 10px 10px 0 0;
@@ -17,7 +17,7 @@
 
 #game-area {
     width: 100%;
-    height: 600px;
+    height: 450px; /* Match GAME_HEIGHT */
     background-color: black;
     background-size: cover;
     background-position: center;
@@ -26,48 +26,53 @@
     border: 2px solid #444;
 }
 
+/* Player Styles */
 #player {
-    width: 40px;
-    height: 40px;
+    width: 35px; /* Match PLAYER_WIDTH */
+    height: 35px; /* Match PLAYER_HEIGHT */
     background-image: url('photos/pacman.png'); 
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    z-index: 5;
 }
 
+#player-boundary {
+    z-index: 10;
+    pointer-events: none; /* Allow clicks to pass through */
+}
+
+/* Enemy Styles */
 .enemy {
-    width: 35px;
-    height: 35px;
+    width: 30px; /* Match ENEMY_WIDTH */
+    height: 30px; /* Match ENEMY_HEIGHT */
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     position: absolute;
 }
 
-
-.bullet {
+/* Projectile Styles */
+.bullet, .enemy-bullet {
     width: 10px;
     height: 10px;
-    background-color: yellow;
     border-radius: 50%;
     position: absolute;
+}
+
+.bullet {
+    background-color: yellow;
 }
 
 .enemy-bullet {
-    width: 10px;
-    height: 10px;
     background-color: white;
-    border-radius: 50%;
-    position: absolute;
 }
 
+/* Game State Screens */
 #game-over, #game-win {
     position: absolute;
-    top: 50%;
+    top: 60%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: rgba(0, 0, 0, 0.8);
@@ -76,52 +81,68 @@
     text-align: center;
     color: white;
     z-index: 100;
-    width: 300px;
+    width: 450px;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .hidden {
     display: none;
 }
 
+#player-rank-message, #player-win-rank-message {
+    margin: 10px 0;
+    font-size: 18px;
+    color: #f9e42e;
+}
+
+/* Button Styles */
+#restart-button, #restart-win-button, #startGameButton, .ingame-button {
+    background-color: #f9e42e;
+    color: #222222;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
 #restart-button, #restart-win-button {
     margin-top: 20px;
     padding: 10px 20px;
-    background-color: #f9e42e;
-    color: #222222; 
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
     font-size: 16px;
 }
-
-#restart-button:hover, #restart-win-button:hover {
-    background-color: #ffe600;
-}
-
 
 #startGameButton {
-    background-color: #f9e42e;
-    color: #222222;
     padding: 15px 25px;
-    border: none;
-    border-radius: 5px;
     font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
     margin-top: 10px;
     width: 100%;
 }
 
-#startGameButton:hover {
+.ingame-button {
+    padding: 5px 10px;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+#restart-button:hover, #restart-win-button:hover, #startGameButton:hover, .ingame-button:hover {
     background-color: #ffe600;
 }
 
+.game-over-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
 
-/* High score table styles */
+.game-over-buttons button {
+    width: 48%;
+}
+
+/* High Score Table Styles */
 .high-scores-table {
     width: 100%;
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin: 15px 0;
     border-collapse: collapse;
     color: white;
 }
@@ -136,149 +157,4 @@
 .high-scores-table th {
     background-color: rgba(249, 228, 46, 0.2);
     color: #f9e42e;
-}
-
-#game-over, #game-win {
-    width: 450px;
-    max-height: 80vh;
-    overflow-y: auto;
-}
-
-.game-over-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.game-over-buttons button {
-    width: 48%;
-}
-
-#player-rank-message, #player-win-rank-message {
-    margin: 10px 0;
-    font-size: 18px;
-    color: #f9e42e;
-}
-
-
-#player {
-    width: 40px;
-    height: 40px;
-    background-image: url('photos/pacman.png'); 
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    position: absolute;
-    /* Remove the bottom property as we'll be using top/left for positioning */
-    /* bottom: 20px; */
-    /* Remove transform as we'll set exact left position */
-    /* transform: translateX(-50%); */
-}
-
-#player-boundary {
-    z-index: 10;
-    pointer-events: none; /* Allow clicks to pass through */
-}
-
-
-/* CSS for the in-game New Game button */
-.ingame-button {
-    background-color: #f9e42e;
-    color: #222222;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    margin-left: 10px;
-    transition: background-color 0.3s;
-}
-
-.ingame-button:hover {
-    background-color: #ffe600;
-}
-
-
-/* Update game area dimensions */
-#game-area {
-    width: 100%;
-    height: 450px; /* Match GAME_HEIGHT */
-    background-color: black;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    overflow: hidden;
-    border: 2px solid #444;
-}
-
-/* Update player size */
-#player {
-    width: 35px; /* Match PLAYER_WIDTH */
-    height: 35px; /* Match PLAYER_HEIGHT */
-    background-image: url('photos/pacman.png'); 
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    position: absolute;
-}
-
-/* Update enemy size */
-.enemy {
-    width: 30px; /* Match ENEMY_WIDTH */
-    height: 30px; /* Match ENEMY_HEIGHT */
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    position: absolute;
-}
-
-
-/* Make game info more compact */
-.game-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 10px;
-    font-size: 16px;
-    background-color: #333;
-    color: white;
-    border-radius: 10px 10px 0 0;
-}
-
-
-/* Make game over and win screens fit better */
-#game-over, #game-win {
-    width: 400px;
-    max-height: 80vh;
-    overflow-y: auto;
-}
-
-
-/* Update the game-over and game-win elements to position them lower */
-#game-over, #game-win {
-    position: absolute;
-    top: 60%; /* Changed from 50% to 60% to move down */
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 30px;
-    border-radius: 10px;
-    text-align: center;
-    color: white;
-    z-index: 100;
-    width: 450px; /* Maintain your current width */
-    max-height: 80vh;
-    overflow-y: auto;
-}
-
-/* If you want to adjust the high scores table position specifically */
-#high-scores-container, #win-high-scores-container {
-    margin-top: 20px;
-}
-
-/* Make the table slightly more compact if needed */
-.high-scores-table th,
-.high-scores-table td {
-    padding: 6px;
-    font-size: 14px;
 }

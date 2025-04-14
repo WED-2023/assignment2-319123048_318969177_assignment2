@@ -1,4 +1,3 @@
-
 /* General reset */
 * {
     margin: 0;
@@ -13,19 +12,19 @@ body {
     min-height: 100vh;
 }
 
-/* Container for all screens */
+/* Main container */
 .container {
     width: 100%;
-    max-width: 800px;
+    max-width: 600px; /* Match GAME_WIDTH */
     margin: 20px auto;
 }
 
-/* Screens that will be shown/hidden */
+/* Screen handling */
 .screen {
     display: none;
 }
 
-/* Navigation menu styles */
+/* Navigation menu */
 nav {
     background-color: #000000;
     padding: 15px 0;
@@ -43,32 +42,7 @@ nav a:hover {
     text-decoration: underline;
 }
 
-/* Welcome Page container */
-.welcome-container {
-    background-color: #000000;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
-    padding: 30px;
-    text-align: center;
-    color: white;
-}
-
-/* Logo and info section */
-.logo-section {
-    margin-bottom: 10px;
-}
-
-.logo {
-    width: 200px;
-    height: 200px;
-    object-fit: contain;
-    margin-bottom: 20px;
-}
-
-.welcome-container h1 {
-    color: white;
-}
-
+/* Typography */
 h1 {
     font-size: 24px;
     margin-bottom: 10px;
@@ -80,39 +54,77 @@ p {
     color: white;
 }
 
-/* Button section styles */
+/* Links */
+a {
+    color: #f9e42e;
+    text-decoration: none;
+}
+
+/* Footer */
+footer h3,
+footer p {
+    color: black;
+}
+
+/* All dark containers (shared styles) */
+.welcome-container, 
+.registration-container, 
+.login-container,
+.config-container,
+.about-modal-content {
+    background-color: #000000;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    color: white;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Logo section */
+.logo-section {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.logo {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    margin-bottom: 20px;
+}
+
+/* Button section */
 .button-section {
     display: flex;
     justify-content: space-around;
 }
 
-/* Button styles */
-.button {
+/* All buttons (shared styles) */
+.button,
+button,
+.toggle-password {
     background-color: #f9e42e;
-    color: #222222; 
-    padding: 15px 25px;
+    color: #222222;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.button:hover {
+.button,
+button {
+    padding: 15px 25px;
+    font-size: 16px;
+}
+
+.button:hover,
+button:hover,
+.toggle-password:hover {
     background-color: #ffe600;
 }
 
-/* Registration and Login page container */
-.registration-container, .login-container {
-    background-color: #000000;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    text-align: center;
-    color: white;
-}
-
-/* Form and input styles */
+/* Form elements */
 .form-group {
     margin-bottom: 20px;
     text-align: left;
@@ -134,33 +146,7 @@ input, select {
     font-size: 16px;
 }
 
-button {
-    background-color: #f9e42e;
-    color: #222222;
-    padding: 15px 25px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #ffe600;
-}
-
-a {
-    color: #f9e42e;
-    text-decoration: none;
-}
-
-footer h3,
-footer p {
-    color: black;
-}
-
-
-/* about-modal */
+/* About modal */
 .about-modal {
     display: none;
     position: fixed;
@@ -171,17 +157,6 @@ footer p {
     height: 100%;
     overflow: auto;
     background-color: rgba(0,0,0,0.4);
-}
-
-.about-modal-content {
-    background-color: #000000;
-    color: white; 
-    border: 1px solid #f9e42e;
-    margin: 15% auto;
-    padding: 20px;
-    width: 50%;
-    border-radius: 5px;
-    position: relative;
 }
 
 .about-close {
@@ -197,7 +172,6 @@ footer p {
 .about-close:hover,
 .about-close:focus {
     color: #ffe600;
-    text-decoration: none;
 }
 
 .submitter-info {
@@ -210,38 +184,17 @@ footer p {
     border-top: 1px solid #eee;
 }
 
-/* Configuration Screen Styles */
-.config-container {
-    background-color: #000000;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    color: white;
-}
-
+/* Configuration form */
 .config-form {
     max-width: 600px;
     margin: 0 auto;
 }
 
-.config-form .form-group {
-    margin-bottom: 20px;
-}
-
-.config-form label {
-    display: block;
-    font-size: 16px;
-    margin-bottom: 8px;
-    font-weight: bold;
-}
-
-.config-form select,
-.config-form input[type="number"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
+.config-form h2 {
+    color: #f9e42e;
+    margin: 30px 0 15px 0;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
 }
 
 .config-form input[type="color"] {
@@ -251,16 +204,7 @@ footer p {
     border-radius: 5px;
 }
 
-
-/* Sound settings styling */
-.config-form h2 {
-    color: #f9e42e;
-    margin: 30px 0 15px 0;
-    border-bottom: 1px solid #333;
-    padding-bottom: 10px;
-}
-
-/* Toggle switch styling */
+/* Toggle switch */
 .toggle-container {
     display: flex;
     align-items: center;
@@ -309,7 +253,7 @@ input:checked + .toggle-label:after {
     font-size: 14px;
 }
 
-/* Volume slider styling */
+/* Volume slider */
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
@@ -319,6 +263,7 @@ input[type="range"] {
     background: #444;
     outline: none;
     margin-right: 10px;
+    transform: rotate(180deg);
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -345,7 +290,7 @@ input[type="range"]::-moz-range-thumb {
     display: inline-block;
 }
 
-/* Password visibility toggle styles */
+/* Password field */
 .password-container {
     position: relative;
     display: flex;
@@ -354,25 +299,19 @@ input[type="range"]::-moz-range-thumb {
 
 .password-container input {
     flex: 1;
-    padding-right: 40px; /* Make space for the button */
+    padding-right: 40px;
 }
 
 .toggle-password {
     position: absolute;
     right: 5px;
     background: none;
-    border: none;
     color: #f9e42e;
-    cursor: pointer;
     padding: 5px 10px;
     font-size: 16px;
 }
 
-.toggle-password:hover {
-    color: #ffe600;
-}
-
-/* Birth date styling */
+/* Birth date fields */
 .birth-date-container {
     display: flex;
     gap: 10px;
@@ -388,59 +327,20 @@ input[type="range"]::-moz-range-thumb {
     color: #ccc;
 }
 
-/* Make sure selects have the same height */
-.birth-date-field select {
-    width: 100%;
-}
-
-
-/* Update game info container to accommodate the button */
+/* Game info */
 .game-info {
     display: flex;
-    justify-content: center; /* Change from space-between to center */
-    gap: 30px; /* Add spacing between the elements */
+    justify-content: center;
+    gap: 30px;
     padding: 10px;
     font-size: 18px;
     background-color: #333;
     color: white;
     border-radius: 10px 10px 0 0;
-    text-align: center; /* Add text alignment */
-}
-/* Adjust the game info on smaller screens */
-@media (max-width: 600px) {
-    .game-info {
-        flex-wrap: wrap;
-    }
-    
-    .ingame-button {
-        margin-top: 5px;
-    }
-}
-/* changing the music bar appearance so it wont be reversed */
-input[type="range"] {
-    transform: rotate(180deg);
-    /* Make sure slider text is aligned correctly */
-    -webkit-appearance: none;
-    appearance: none;
+    text-align: center;
 }
 
-
-/* Update container max-width */
-.container {
-    width: 100%;
-    max-width: 600px; /* Match GAME_WIDTH */
-    margin: 20px auto;
-}
-
-
-
-/* Adjust other game screens to match */
-.config-container, .registration-container, .login-container, .welcome-container {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-/* Responsive adjustments for smaller screens */
+/* Responsive design */
 @media (max-width: 650px) {
     .container {
         width: 95%;
@@ -453,10 +353,15 @@ input[type="range"] {
     
     .game-info {
         font-size: 14px;
+        flex-wrap: wrap;
     }
     
     #game-over, #game-win {
         width: 90%;
         max-width: 400px;
+    }
+    
+    .ingame-button {
+        margin-top: 5px;
     }
 }
