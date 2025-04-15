@@ -1166,8 +1166,8 @@ function checkCollisions() {
             const enemy = enemies[j];
             
             if (isColliding(bullet, enemy)) {
-                // Play enemy hit sound effect
-                playSoundEffect('enemyHit');
+                // Play player hit sound effect
+                playSoundEffect('playerHit');
                 
                 // Calculate score based on enemy row
                 let points;
@@ -1200,8 +1200,8 @@ function checkCollisions() {
         const bullet = enemyBullets[i];
         
         if (isColliding(bullet, player)) {
-            // Play player hit sound effect
-            playSoundEffect('playerHit');
+            // Play enemy hit sound effect
+            playSoundEffect('enemyHit');
             
             // Player hit
             lives--;
