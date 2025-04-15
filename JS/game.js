@@ -727,8 +727,8 @@ const ENEMY_ROWS = 4;
 const ENEMY_COLS = 5;
 const ENEMY_PADDING = 12;
 const ENEMY_TOP_MARGIN = 30;
-const BULLET_WIDTH = 5;
-const BULLET_HEIGHT = 15;
+const BULLET_WIDTH = 10;
+const BULLET_HEIGHT = 10;
 const ENEMY_MOVE_SPEED_INITIAL = 1;
 const MAX_SPEED_MULTIPLIER = 5; // After 4 accelerations (initial + 4 = 5)
 
@@ -921,7 +921,6 @@ function initGame() {
     startGameTimer();
 }
 
-// Function to update the game's HUD (heads-up display)
 // Function to update the game's HUD (heads-up display)
 function updateHUD() {
     // Update score
