@@ -81,6 +81,16 @@ footer p {
     margin: 0 auto;
 }
 
+#welcomeScreen a {
+    color: #1a73e8; /* classic blue */
+    text-decoration: underline;
+    word-break: break-all; /* breaks long URLs nicely */
+}
+
+#welcomeScreen a:hover {
+    color: #0c50a3;
+}
+
 /* Logo section */
 .logo-section {
     margin-bottom: 10px;
