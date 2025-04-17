@@ -1,25 +1,27 @@
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function () {
     // open the about screen
-    $("#openAboutBtn").click(function() {
-        $("#aboutModal").css("display", "block");
+    document.getElementById("openAboutBtn").addEventListener("click", function () {
+        document.getElementById("aboutModal").style.display = "block";
     });
-    
-    // close when user click on X
-    $(".about-close").click(function() {
-        $("#aboutModal").css("display", "none");
+
+    // close when user clicks on X
+    document.querySelectorAll(".about-close").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            document.getElementById("aboutModal").style.display = "none";
+        });
     });
-    
-    // close when user press outside of the about screen
-    $(window).click(function(event) {
-        if ($(event.target).is("#aboutModal")) {
-            $("#aboutModal").css("display", "none");
+
+    // close when user clicks outside the modal
+    window.addEventListener("click", function (event) {
+        if (event.target.id === "aboutModal") {
+            document.getElementById("aboutModal").style.display = "none";
         }
     });
-    
-    // close when user press ESC
-    $(document).keydown(function(event) {
-        if (event.keyCode == 27) {
-            $("#aboutModal").css("display", "none");
+
+    // close when user presses ESC
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            document.getElementById("aboutModal").style.display = "none";
         }
     });
 });

@@ -1356,7 +1356,3 @@
 // main.js
 // Main initialization file that imports and coordinates the other modules
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the configuration screen when document is ready
-    initConfigScreen();
-});

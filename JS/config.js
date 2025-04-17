@@ -14,6 +14,11 @@ let gameConfig = {
     timeRemaining: 0, 
 };
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the configuration screen when document is ready
+    initConfigScreen();
+});
+
 
 function initConfigScreen() {
     populateKeyDropdowns();

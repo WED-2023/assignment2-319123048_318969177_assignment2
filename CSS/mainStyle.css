@@ -70,8 +70,7 @@ footer p {
 .welcome-container, 
 .registration-container, 
 .login-container,
-.config-container,
-.about-modal-content {
+.config-container {
     background-color: #000000;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -91,10 +90,29 @@ footer p {
     color: #0c50a3;
 }
 
+footer .footer-section a{
+    text-align: left;
+    direction: ltr;
+    color: #1a73e8;
+    word-break: break-all;
+    text-decoration: underline;
+}
+footer .footer-section  a:hover {
+    color: #0c50a3;
+}
+
+footer {
+    text-align: left;
+    direction: ltr;
+    margin-left: 10px;
+
+}
+
 /* Logo section */
 .logo-section {
     margin-bottom: 10px;
     text-align: center;
+    
 }
 
 .logo {
@@ -157,6 +175,12 @@ input, select {
 }
 
 /* About modal */
+#openAboutBtn {
+    float: right;
+    margin-right: 10px;
+    margin-top: -523px;
+}
+
 .about-modal {
     display: none;
     position: fixed;
@@ -165,18 +189,34 @@ input, select {
     top: 0;
     width: 100%;
     height: 100%;
+    background-color: rgba(0,0,0,0.5);
     overflow: auto;
-    background-color: rgba(0,0,0,0.4);
 }
+
+.about-modal-content {
+    position: relative;
+    background-color: #000;
+    color: white;
+    margin: 80px auto; 
+    padding: 20px;
+    border-radius: 10px;
+    width: 60%;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    text-align: left;
+    direction: ltr;
+}
+
 
 .about-close {
     color: #f9e42e;
     position: absolute;
-    left: 10px;
+    right: 10px;
     top: 10px;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+    z-index: 1000;
 }
 
 .about-close:hover,

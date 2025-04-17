@@ -4,7 +4,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <img src="photos/logo.png" alt="Game Logo" class="logo"> -->
     <title>My Pac-Man Game</title>
     <link rel="stylesheet" href="CSS/mainStyle.css">
     <link rel="stylesheet" href="CSS/gameStyle.css">
@@ -12,7 +11,6 @@
 <body>
     <!-- Navigation Menu -->
     <nav>
-        <!-- <img src="photos/logo.png" alt="Game Logo" class="logo"> -->
         <a href="javascript:void(0);" id="goToWelcome">Welcome</a>
         <a href="javascript:void(0);" id="goToLogin">Login</a>
         <a href="javascript:void(0);" id="goToRegister">Register</a>
@@ -122,46 +120,46 @@
     <div class="config-form">
         <!-- Movement Keys -->
         <h2>Controls</h2>
-<div class="form-group">
-    <label for="leftKey">Move Left Key:</label>
-    <select id="leftKey" name="leftKey">
-        <option value="ArrowLeft" selected>Arrow Left</option>
-        <!-- Letter keys will be populated by JavaScript -->
-    </select>
-</div>
+        <div class="form-group">
+            <label for="leftKey">Move Left Key:</label>
+            <select id="leftKey" name="leftKey">
+                <option value="ArrowLeft" selected>Arrow Left</option>
+                <!-- Letter keys will be populated by JavaScript -->
+            </select>
+        </div>
 
-<div class="form-group">
-    <label for="rightKey">Move Right Key:</label>
-    <select id="rightKey" name="rightKey">
-        <option value="ArrowRight" selected>Arrow Right</option>
-        <!-- Letter keys will be populated by JavaScript -->
-    </select>
-</div>
+        <div class="form-group">
+            <label for="rightKey">Move Right Key:</label>
+            <select id="rightKey" name="rightKey">
+                <option value="ArrowRight" selected>Arrow Right</option>
+                <!-- Letter keys will be populated by JavaScript -->
+            </select>
+        </div>
 
-<div class="form-group">
-    <label for="upKey">Move Up Key:</label>
-    <select id="upKey" name="upKey">
-        <option value="ArrowUp" selected>Arrow Up</option>
-        <!-- Letter keys will be populated by JavaScript -->
-    </select>
-</div>
+        <div class="form-group">
+            <label for="upKey">Move Up Key:</label>
+            <select id="upKey" name="upKey">
+                <option value="ArrowUp" selected>Arrow Up</option>
+                <!-- Letter keys will be populated by JavaScript -->
+            </select>
+        </div>
 
-<div class="form-group">
-    <label for="downKey">Move Down Key:</label>
-    <select id="downKey" name="downKey">
-        <option value="ArrowDown" selected>Arrow Down</option>
-        <!-- Letter keys will be populated by JavaScript -->
-    </select>
-</div>
+        <div class="form-group">
+            <label for="downKey">Move Down Key:</label>
+            <select id="downKey" name="downKey">
+                <option value="ArrowDown" selected>Arrow Down</option>
+                <!-- Letter keys will be populated by JavaScript -->
+            </select>
+        </div>
 
-<!-- Shooting Key -->
-<div class="form-group">
-    <label for="shootKey">Shooting Key:</label>
-    <select id="shootKey" name="shootKey">
-        <option value=" " selected>Spacebar</option>
-        <!-- Letter keys will be populated by JavaScript -->
-    </select>
-</div>
+        <!-- Shooting Key -->
+        <div class="form-group">
+            <label for="shootKey">Shooting Key:</label>
+            <select id="shootKey" name="shootKey">
+                <option value=" " selected>Spacebar</option>
+                <!-- Letter keys will be populated by JavaScript -->
+            </select>
+        </div>
         
         <!-- Bullet Color -->
         <div class="form-group">
@@ -217,21 +215,21 @@
         <button id="startGameButton" class="button">Start Game</button>
     </div>
 </div>
-        <!-- Game Screen -->
-        <div id="gameScreen" class="screen game-container">
-            <div class="game-title" style="text-align: center; font-size: 24px; font-weight: bold; color: rgb(104, 104, 104); margin-top: 10px;">
-                Game
-            </div>
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen game-container">
+        <div class="game-title" style="text-align: center; font-size: 24px; font-weight: bold; color: rgb(104, 104, 104); margin-top: 10px;">
+            Game
+        </div>
             
-            <div class="game-info">
-                <div class="score">ניקוד: <span id="score">0</span></div>
-                <div class="lives">חיים: <span id="lives">3</span></div>
-            </div>
-            <div id="game-area">
-                <div id="player"></div>
-                <!-- Enemy ships will be created by JavaScript -->
-            </div>
-            <!-- Enhanced Game Over Screen -->
+        <div class="game-info">
+            <div class="score">ניקוד: <span id="score">0</span></div>
+            <div class="lives">חיים: <span id="lives">3</span></div>
+        </div>
+        <div id="game-area">
+            <div id="player"></div>
+        <!-- Enemy ships will be created by JavaScript -->
+        </div>
+        <!-- Enhanced Game Over Screen -->
 <div id="game-over" class="hidden">
     <h2 id="game-over-title">Game Over</h2>
     <p>Your final score: <span id="final-score">0</span></p>
@@ -262,13 +260,13 @@
 </div>
         </div>
     </div>
-    <button id="openAboutBtn">אודות</button>
+    <button id="openAboutBtn">About</button>
 
     <!--About Modal screen-->
 <div id="aboutModal" class="about-modal">
     <div class="about-modal-content">
         <span class="about-close">&times;</span>
-        <h2>אודות הפרויקט</h2>
+        <h2>About the Project</h2>
         
         <div class="submitter-info">
             <h3>Submitters:</h3>
@@ -279,24 +277,27 @@
         </div>
         
         <div class="technical-info">
-            <h3>מידע טכני:</h3>
-            <p><strong>שימוש ב-Template:</strong> לא נעשה שימוש ב-Template חיצוני, הכל נכתב מאפס.</p>
-            <p><strong>שימוש ב-jQuery:</strong> כן, נעשה שימוש ב-jQuery עבור פונקציונליות המודאל.</p>
+            <h3>Technical Information:</h3>
+            <p><strong>Template Usage:</strong> No external template was used — everything was written from scratch.</p>
             
-            <h3>קשיים בפרויקט:</h3>
-            <p>במהלך העבודה על הפרויקט נתקלנו במספר אתגרים:</p>
+            <h3>Project Challenges:</h3>
+            <p>During the development of the project, we encountered several challenges:</p>
             <ul>
-                <li>אתגרים בהתאמת המודאל למסכים ברזולוציות שונות</li>
-                <li>טיפול במקרי קצה של סגירת המודאל</li>
-                <li>התאמת הממשק לתמיכה בשפה העברית ובכיוון RTL</li>
+                <li>Adapting the modal to different screen resolutions</li>
+                <li>Handling edge cases related to closing the modal</li>
+                <li>Adjusting the interface to support Hebrew and RTL layout</li>
             </ul>
-            <h3> Instructions: </h3>
-            <p>        .מותר לזוז ימינה, שמאלה, למטה ולמעלה. יש כפתור לירות
-                מטרת המשחק היא לחסל את כל הרוחות רפאים בלוח ולצבור מקסימום נקודות. הרוחות בשורה הראשונה שוות 5 נקודות, בשורה השנייה 10 נקודות, בשורה השלישית 15 נקודות ובשורה הרביעית 20 נקודות. בכל משחק יש לשחקן 3 פסילות מותרות.
-לאחר התחברות למשתמש עוברים למסך של קונפיגורציה שבו ניתן לבחור מקשים לתזוזות ומקש לירי, ניתן לבחור צבע ליריות, עוצמת מוזיקת הרקע, עוצמת מוזיקה של היריות וזמן למשחק 
-                כאשר משחקים מופיע למעלה ניקוד, כמות פסילות שנותרה, זמן שנותר למשחק וכפתור להתחיל משחק חדש 
-                ברגע שנגמר המשחק מכל סיבה שהיא, מופיעה טבלת הניקוד של השחקן, עם 2 כפתורים. לשחק שוב- מתחיל משחק חדש לפי הקונפיגורציה הקודמת, משחק חדש- מחזיר את המשתמש למסך של הקונפיגורציה. 
-                בכל זמן נתון ניתן לעבור בין המסכים על ידי לחיצה על הכפתורים בתפריט העליון</p>
+        
+            <h3>Instructions:</h3>
+            <p>You can move right, left, down, and up. There is a button to shoot.  
+            The goal of the game is to eliminate all the ghosts on the board and collect as many points as possible.  
+            Ghosts in the first row are worth 5 points, in the second row 10 points, in the third row 15 points, and in the fourth row 20 points.  
+            In each game, the player has 3 lives.  
+            After logging in, the user is directed to a configuration screen where they can choose movement keys and a shooting key, the color of the shots, background music volume, shooting sound volume, and game time.  
+            While playing, the top of the screen displays the score, remaining lives, time left, and a button to start a new game.  
+            When the game ends for any reason, a scoreboard is shown with two buttons: "Play Again" — starts a new game with the same configuration, and "New Game" — returns the user to the configuration screen.  
+            At any time, users can switch between screens using the buttons in the top menu.
+            </p>
         </div>
     </div>
 </div>
@@ -305,19 +306,21 @@
 <footer class="site-footer">
     <div class="footer-container">
         <div class="footer-section contact-info">
-            <h3>פרטי התקשרות</h3>
-            <p><strong>אימייל:</strong> noapatch@post.bgu.ac.il</p>
-            <p><strong>טלפון:</strong> 050-9308-770</p>
-            <p><strong>כתובת:</strong> שלמה המלך 13ג, באר שבע</p>
+            <h3> Contact info</h3>
+            <p><strong>mail:</strong> noapatch@post.bgu.ac.il</p>
+            <p><strong>phone:</strong> 050-9308-770</p>
+            <p><strong>link to git: 
+                <a href="https://github.com/WED-2023/assignment2-319123048_318969177_assignment2" target="_blank">
+                    https://github.com/WED-2023/assignment2-319123048_318969177_assignment2
+                </a>
+            </strong> </p>
         </div>
         <div class="footer-section about-site">
-            <h3>אודות האתר</h3>
-            <p>משחק בנושא המשחק PAC-MAN. על השחקן לפגוע בכל הרוחות המנסות להרוג אותו</p>
-            <p>גרסה: 1.0.0</p>
+            <p>A game inspired by PAC-MAN. For more information press on the about button</p>
+            <p>Version: 1.0.0</p>
         </div>
         <div class="footer-section copyright">
-            <p>© 2025 כל הזכויות שמורות</p>
-            <p>נועה פצ'ורניק ויקי נפתלי</p>
+            <p>© 2025 All rights reserved to Noa Patchornik and Yaki Naftali</p>
         </div>
     </div>
 </footer>
@@ -328,6 +331,6 @@
 <script src="JS/config.js"></script>
 <script src="JS/game.js"></script>
 <script src="JS/modal.js"></script>
-<script src="JS/main.js"></script>
+<!-- <script src="JS/main.js"></script> -->
 </body>
 </html>
