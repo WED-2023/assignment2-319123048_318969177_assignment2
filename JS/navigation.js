@@ -1,18 +1,18 @@
-//  hide all screens
-function hideAllScreens() {
+// hide all screens
+function hideallscreens() {
     document.querySelectorAll('.screen').forEach(function(screen) {
         screen.style.display = 'none';
     });
 }
 
-// display only a wanted screen
-function showScreen(screenId) {
-    hideAllScreens();
-    document.getElementById(screenId).style.display = 'block';
+// show just one screen
+function showscreen(screenid) {
+    hideallscreens();
+    document.getElementById(screenid).style.display = 'block';
     
-    if (typeof audioElements !== 'undefined' && audioElements.backgroundMusic) {
-        if (screenId !== 'gameScreen') {
-            audioElements.backgroundMusic.pause();
+    if (typeof sounds !== 'undefined' && sounds.backgroundmusic) {
+        if (screenid !== 'gameScreen') {
+            sounds.backgroundmusic.pause();
         }
     }
 }
@@ -20,42 +20,42 @@ function showScreen(screenId) {
 
 document.addEventListener('DOMContentLoaded', function() {
     
-    showScreen("welcomeScreen");
+    showscreen("welcomeScreen");
 
     document.getElementById("goToWelcome").addEventListener("click", function() {
-        showScreen("welcomeScreen");
+        showscreen("welcomeScreen");
     });
 
     document.getElementById("goToLogin").addEventListener("click", function() {
         document.getElementById("loginUsername").value = "";
         document.getElementById("loginPassword").value = "";
-        showScreen("loginScreen");
+        showscreen("loginScreen");
     });
 
     document.getElementById("goToRegister").addEventListener("click", function() {
-        clearRegistrationForm();
-        showScreen("registrationScreen");
+        clearform();
+        showscreen("registrationScreen");
     });
 
     document.getElementById("registerButton").addEventListener("click", function() {
-        clearRegistrationForm();
-        showScreen("registrationScreen");
+        clearform();
+        showscreen("registrationScreen");
     });
 
     document.getElementById("loginButton").addEventListener("click", function() {
         document.getElementById("loginUsername").value = "";
         document.getElementById("loginPassword").value = "";
-        showScreen("loginScreen");
+        showscreen("loginScreen");
     });
 
     document.getElementById("toLogin").addEventListener("click", function() {
         document.getElementById("loginUsername").value = "";
         document.getElementById("loginPassword").value = "";
-        showScreen("loginScreen");
+        showscreen("loginScreen");
     });
 
     document.getElementById("toRegister").addEventListener("click", function() {
-        clearRegistrationForm();
-        showScreen("registrationScreen");
+        clearform();
+        showscreen("registrationScreen");
     });
 });

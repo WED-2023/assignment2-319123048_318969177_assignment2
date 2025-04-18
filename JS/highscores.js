@@ -1,70 +1,69 @@
-let currentPlayer = null;
+let currentplayer = null;
 
-// save username
-function setCurrentPlayer(username) {
-    currentPlayer = username;
-    localStorage.setItem('currentPlayer', username);
+// save player name
+function setplayer(username) {
+    currentplayer = username;
+    localStorage.setItem('currentplayer', username);
 }
 
-//  get  username
-function getCurrentPlayer() {
-    if (!currentPlayer) {
-        currentPlayer = localStorage.getItem('currentPlayer');
+// get player name
+function getplayer() {
+    if (!currentplayer) {
+        currentplayer = localStorage.getItem('currentplayer');
     }
-    return currentPlayer;
+    return currentplayer;
 }
 
-//  save a score
-function saveHighScore(score, gameResult) {
-    const player = getCurrentPlayer();
+// save player score
+function savehighscore(score, gameresult) {
+    const player = getplayer();
 
-    let highScores = getHighScores();
-    const newScore = {
+    let highscores = gethighscores();
+    const newscore = {
         score: score,
         date: new Date().toLocaleString(),
-        result: gameResult
+        result: gameresult
     };
     
-    highScores.push(newScore);
+    highscores.push(newscore);
     
-    highScores.sort(function(a, b) {
+    highscores.sort(function(a, b) {
         return b.score - a.score;
       });
     
-    localStorage.setItem(`highScores_${player}`, JSON.stringify(highScores));
+    localStorage.setItem(`highscores_${player}`, JSON.stringify(highscores));
     
-    return getRank(score);
+    return getrank(score);
 }
 
-//  get history 
-function getHighScores() {
-    const player = getCurrentPlayer();
+// get score history 
+function gethighscores() {
+    const player = getplayer();
     
-    const scoresJSON = localStorage.getItem(`highScores_${player}`);
-    return scoresJSON ? JSON.parse(scoresJSON) : [];
+    const scoredata = localStorage.getItem(`highscores_${player}`);
+    return scoredata ? JSON.parse(scoredata) : [];
 }
 
-// Function to clear high scores when a new player logs in
-function clearPreviousPlayerScores() {
-    // We don't actually delete - we just don't load them
-    // They'll still be in localStorage if the previous player logs back in
+// clear scores for new login
+function clearscores() {
+    // just don't load them - keep in storage for when player logs in again
 }
 
-// rank of the score
-function getRank(score) {
-    const scores = getHighScores();
+// get score rank
+function getrank(score) {
+    const scores = gethighscores();
     return scores.findIndex(s => s.score === score) + 1;
 }
 
-// show table
-function displayHighScoresTable() {
-    const highScores = getHighScores();
+// make score table
+function showhighscores() {
+    const highscores = gethighscores();
     
-    if (highScores.length === 0) {
+    if (highscores.length === 0) {
         return '<p>No high scores yet. Play a game!</p>';
     }
     
-    let tableHTML = `
+    let tablehtml = `
         <table class="high-scores-table">
             <thead>
                 <tr>
@@ -77,8 +76,8 @@ function displayHighScoresTable() {
             <tbody>
     `;
     
-    highScores.forEach((score, index) => {
-        tableHTML += `
+    highscores.forEach((score, index) => {
+        tablehtml += `
             <tr>
                 <td>${index + 1}</td>
                 <td>${score.score}</td>
@@ -88,10 +87,10 @@ function displayHighScoresTable() {
         `;
     });
     
-    tableHTML += `
+    tablehtml += `
             </tbody>
         </table>
     `;
     
-    return tableHTML;
+    return tablehtml;
 }

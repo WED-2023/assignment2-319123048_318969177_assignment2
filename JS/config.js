@@ -1,41 +1,41 @@
-let gameConfig = {
-    leftKey: "ArrowLeft", 
-    rightKey: "ArrowRight", 
-    upKey: "ArrowUp", 
-    downKey: "ArrowDown", 
-    shootKey: " ",
-    bulletColor: "#FFFF00", 
-    gameDuration: 2, 
-    backgroundMusic: true, 
-    musicVolume: 50, 
-    soundEffects: true, 
-    effectsVolume: 70, 
+let gameconfig = {
+    leftkey: "ArrowLeft", 
+    rightkey: "ArrowRight", 
+    upkey: "ArrowUp", 
+    downkey: "ArrowDown", 
+    shootkey: " ",
+    bulletcolor: "#FFFF00", 
+    gamelength: 2, 
+    backgroundmusic: true, 
+    musicvolume: 50, 
+    soundeffects: true, 
+    effectsvolume: 70, 
     timer: null, 
-    timeRemaining: 0, 
+    timeleft: 0, 
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the configuration screen when document is ready
-    initConfigScreen();
+    // start the config screen when page loads
+    setupconfigscreen();
 });
 
 
-function initConfigScreen() {
-    populateKeyDropdowns();
-    initAudio();
-    document.getElementById('leftKey').value = gameConfig.leftKey;
-    document.getElementById('rightKey').value = gameConfig.rightKey;
-    document.getElementById('upKey').value = gameConfig.upKey;
-    document.getElementById('downKey').value = gameConfig.downKey;
-    document.getElementById('shootKey').value = gameConfig.shootKey;
-    document.getElementById('bulletColor').value = gameConfig.bulletColor;
-    document.getElementById('gameDuration').value = gameConfig.gameDuration;
-    document.getElementById('backgroundMusic').checked = gameConfig.backgroundMusic;
-    document.getElementById('musicVolume').value = gameConfig.musicVolume;
-    document.getElementById('musicVolumeValue').textContent = `${gameConfig.musicVolume}%`;
-    document.getElementById('soundEffects').checked = gameConfig.soundEffects;
-    document.getElementById('effectsVolume').value = gameConfig.effectsVolume;
-    document.getElementById('effectsVolumeValue').textContent = `${gameConfig.effectsVolume}%`;
+function setupconfigscreen() {
+    fillkeyoptions();
+    setupsound();
+    document.getElementById('leftKey').value = gameconfig.leftkey;
+    document.getElementById('rightKey').value = gameconfig.rightkey;
+    document.getElementById('upKey').value = gameconfig.upkey;
+    document.getElementById('downKey').value = gameconfig.downkey;
+    document.getElementById('shootKey').value = gameconfig.shootkey;
+    document.getElementById('bulletColor').value = gameconfig.bulletcolor;
+    document.getElementById('gameDuration').value = gameconfig.gamelength;
+    document.getElementById('backgroundMusic').checked = gameconfig.backgroundmusic;
+    document.getElementById('musicVolume').value = gameconfig.musicvolume;
+    document.getElementById('musicVolumeValue').textContent = `${gameconfig.musicvolume}%`;
+    document.getElementById('soundEffects').checked = gameconfig.soundeffects;
+    document.getElementById('effectsVolume').value = gameconfig.effectsvolume;
+    document.getElementById('effectsVolumeValue').textContent = `${gameconfig.effectsvolume}%`;
     
     document.getElementById('bulletColor').addEventListener('change', function() {
         const color = this.value;
@@ -43,88 +43,88 @@ function initConfigScreen() {
     });
     
     document.getElementById('backgroundMusic').addEventListener('change', function() {
-        const toggleText = this.parentElement.querySelector('.toggle-text');
-        toggleText.textContent = this.checked ? 'On' : 'Off';
+        const toggletext = this.parentElement.querySelector('.toggle-text');
+        toggletext.textContent = this.checked ? 'On' : 'Off';
     });
     
     document.getElementById('soundEffects').addEventListener('change', function() {
-        const toggleText = this.parentElement.querySelector('.toggle-text');
-        toggleText.textContent = this.checked ? 'On' : 'Off';
+        const toggletext = this.parentElement.querySelector('.toggle-text');
+        toggletext.textContent = this.checked ? 'On' : 'Off';
     });
     
     document.getElementById('musicVolume').addEventListener('input', function () {
         const volume = this.value;
         document.getElementById('musicVolumeValue').textContent = `${volume}%`;
-        setMusicVolume(volume); 
+        setmusicvolume(volume); 
     });
     
     document.getElementById('effectsVolume').addEventListener('input', function () {
         const volume = this.value;
         document.getElementById('effectsVolumeValue').textContent = `${volume}%`;
-        setEffectsVolume(volume); 
+        seteffectsvolume(volume); 
     });
     
     document.getElementById('startGameButton').addEventListener('click', function() {
         const duration = parseInt(document.getElementById('gameDuration').value);
         
         if (duration < 2) {
-            alert("זמן המשחק חייב להיות לפחות 2 דקות.");
+            alert("Time duaration must be at least 2 minutes");
             document.getElementById('gameDuration').value = 2; 
             return; 
         }
         
-        const leftKey = document.getElementById('leftKey').value;
-        const rightKey = document.getElementById('rightKey').value;
-        const upKey = document.getElementById('upKey').value;
-        const downKey = document.getElementById('downKey').value;
-        const shootKey = document.getElementById('shootKey').value;
+        const leftkey = document.getElementById('leftKey').value;
+        const rightkey = document.getElementById('rightKey').value;
+        const upkey = document.getElementById('upKey').value;
+        const downkey = document.getElementById('downKey').value;
+        const shootkey = document.getElementById('shootKey').value;
         
-        const keys = [leftKey, rightKey, upKey, downKey, shootKey];
-        const uniqueKeys = [];
+        const keys = [leftkey, rightkey, upkey, downkey, shootkey];
+        const uniquekeys = [];
         
         for (let i = 0; i < keys.length; i++) {
-          if (!uniqueKeys.includes(keys[i])) {
-            uniqueKeys.push(keys[i]);
+          if (!uniquekeys.includes(keys[i])) {
+            uniquekeys.push(keys[i]);
           }
         }
         
-        if (keys.length !== uniqueKeys.length) {
+        if (keys.length !== uniquekeys.length) {
             alert("Please select different keys for all movement and shooting controls.");
             return;
         }
         
-        gameConfig.leftKey = leftKey;
-        gameConfig.rightKey = rightKey;
-        gameConfig.upKey = upKey;
-        gameConfig.downKey = downKey;
-        gameConfig.shootKey = shootKey;
-        gameConfig.bulletColor = document.getElementById('bulletColor').value;
-        gameConfig.gameDuration = duration;
-        gameConfig.backgroundMusic = document.getElementById('backgroundMusic').checked;
-        gameConfig.musicVolume = parseInt(document.getElementById('musicVolume').value);
-        gameConfig.soundEffects = document.getElementById('soundEffects').checked;
-        gameConfig.effectsVolume = parseInt(document.getElementById('effectsVolume').value);
+        gameconfig.leftkey = leftkey;
+        gameconfig.rightkey = rightkey;
+        gameconfig.upkey = upkey;
+        gameconfig.downkey = downkey;
+        gameconfig.shootkey = shootkey;
+        gameconfig.bulletcolor = document.getElementById('bulletColor').value;
+        gameconfig.gamelength = duration;
+        gameconfig.backgroundmusic = document.getElementById('backgroundMusic').checked;
+        gameconfig.musicvolume = parseInt(document.getElementById('musicVolume').value);
+        gameconfig.soundeffects = document.getElementById('soundEffects').checked;
+        gameconfig.effectsvolume = parseInt(document.getElementById('effectsVolume').value);
         
-        setMusicVolume(gameConfig.musicVolume);
-        setEffectsVolume(gameConfig.effectsVolume);
+        setmusicvolume(gameconfig.musicvolume);
+        seteffectsvolume(gameconfig.effectsvolume);
         
-        gameConfig.timeRemaining = gameConfig.gameDuration * 60;
+        gameconfig.timeleft = gameconfig.gamelength * 60;
         
-        showScreen("gameScreen");
+        showscreen("gameScreen");
         
-        if (!gameInitialized) {
-            initGame();
-            gameInitialized = true;
+        if (!gameinit) {
+            startgame();
+            gameinit = true;
         } else {
-            initGame();
+            startgame();
         }
         
-        playBackgroundMusic();
+        playmusic();
     });
 }
 
-function populateKeyDropdowns() {
-    const keyDropdowns = [
+function fillkeyoptions() {
+    const keydropdowns = [
         document.getElementById('leftKey'),
         document.getElementById('rightKey'),
         document.getElementById('upKey'),
@@ -132,18 +132,18 @@ function populateKeyDropdowns() {
         document.getElementById('shootKey')
     ];
     
-    keyDropdowns.forEach((dropdown, index) => {
+    keydropdowns.forEach((dropdown, index) => {
         if (index !== 4) { 
-            const spaceOption = document.createElement('option');
-            spaceOption.value = " ";
-            spaceOption.textContent = "Spacebar";
-            dropdown.appendChild(spaceOption);
+            const spaceoption = document.createElement('option');
+            spaceoption.value = " ";
+            spaceoption.textContent = "Spacebar";
+            dropdown.appendChild(spaceoption);
         }
     });
     
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
     
-    keyDropdowns.forEach(dropdown => {
+    keydropdowns.forEach(dropdown => {
         letters.forEach(letter => {
             const option = document.createElement('option');
             option.value = letter.toLowerCase();

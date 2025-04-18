@@ -1,45 +1,45 @@
+// game started flag
+let gameinit = false;
+let scoresaved = false;
 
-// Game initialization flag
-let gameInitialized = false;
-let scoreSaved = false;
+// game settings
+const gamewidth = 600;
+const gameheight = 450;
+const playerareaheight = gameheight * 0.4; 
+const playerwidth = 35;
+const playerheight = 35;
+const enemywidth = 30;
+const enemyheight = 30;
+const enemyrows = 4;
+const enemycols = 5;
+const enemyspace = 12;
+const enemytop = 30;
+const bulletwidth = 10;
+const bulletheight = 10;
+const badguyspeedfirst = 0.6;
+const maxspeed = 5; 
 
-// Game constants
-const GAME_WIDTH = 600;
-const GAME_HEIGHT = 450;
-const PLAYER_AREA_HEIGHT = GAME_HEIGHT * 0.4; 
-const PLAYER_WIDTH = 35;
-const PLAYER_HEIGHT = 35;
-const ENEMY_WIDTH = 30;
-const ENEMY_HEIGHT = 30;
-const ENEMY_ROWS = 4;
-const ENEMY_COLS = 5;
-const ENEMY_PADDING = 12;
-const ENEMY_TOP_MARGIN = 30;
-const BULLET_WIDTH = 10;
-const BULLET_HEIGHT = 10;
-const ENEMY_MOVE_SPEED_INITIAL = 1;
-const MAX_SPEED_MULTIPLIER = 5; 
-// Game state
+// game stuff
 let player;
 let enemies = [];
-let playerBullets = [];
-let enemyBullets = [];
+let playerbullets = [];
+let enemybullets = [];
 let score = 0;
 let lives = 3;
-let gameRunning = false;
-let enemyMoveDirection = 1; // 1 for right, -1 for left
-let enemyMoveSpeed = ENEMY_MOVE_SPEED_INITIAL;
-let lastEnemyBulletTime = 0;
-let speedMultiplier = 1;
-let gameInterval;
-let speedIncreaseInterval;
-let canEnemyShoot = true;
+let gameactive = false;
+let enemydir = 1; 
+let enemyspeed = badguyspeedfirst;
+let lastenemyshot = 0;
+let speedup = 1;
+let gameloop;
+let speeduploop;
+let enemycanshoot = true;
 
-// Game elements
-let gameArea, scoreElement, livesElement, gameOverElement, gameWinElement, finalScoreElement, winScoreElement, restartButton, restartWinButton;
+// game parts
+let gamebox, scorebox, livesbox, gameoverbox, gamewinbox, finalscore, winscore, restartbtn, restartwinbtn;
 
-// Update enemy image mapping
-const enemyImages = [
+// enemy image list
+const enemyimages = [
     'photos/blue.png',   
     'photos/red.png',    
     'photos/pink.png',   
@@ -47,682 +47,656 @@ const enemyImages = [
 ];
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Get DOM elements after document is loaded
-    gameArea = document.getElementById('game-area');
-    scoreElement = document.getElementById('score');
-    livesElement = document.getElementById('lives');
-    gameOverElement = document.getElementById('game-over');
-    gameWinElement = document.getElementById('game-win');
-    finalScoreElement = document.getElementById('final-score');
-    winScoreElement = document.getElementById('win-score');
-    restartButton = document.getElementById('restart-button');
-    restartWinButton = document.getElementById('restart-win-button');
+    // get page elements after page loads
+    gamebox = document.getElementById('game-area');
+    scorebox = document.getElementById('score');
+    livesbox = document.getElementById('lives');
+    gameoverbox = document.getElementById('game-over');
+    gamewinbox = document.getElementById('game-win');
+    finalscore = document.getElementById('final-score');
+    winscore = document.getElementById('win-score');
+    restartbtn = document.getElementById('restart-button');
+    restartwinbtn = document.getElementById('restart-win-button');
     
     document.getElementById('restart-button').addEventListener('click', function() {
-        initGame();
+        startgame();
     });
 
     document.getElementById('restart-win-button').addEventListener('click', function() {
-        initGame();
+        startgame();
     });
 
     
     document.getElementById('new-game-button').addEventListener('click', function() {
-        showScreen("configScreen");
+        showscreen("configScreen");
     });
 
     document.getElementById('new-win-game-button').addEventListener('click', function() {
-        showScreen("configScreen");
+        showscreen("configScreen");
     });
 });
 
-// Set up keyboard event listeners
+// keyboard controls setup
 document.addEventListener('keydown', (event) => {
-    // List of keys used for game controls
-    const gameControlKeys = [
+    // list of keys for game
+    const gamekeys = [
         'ArrowUp', 
         'ArrowDown', 
         'ArrowLeft', 
         'ArrowRight', 
-        ' ', // Spacebar
-        gameConfig.leftKey, 
-        gameConfig.rightKey, 
-        gameConfig.upKey,
-        gameConfig.downKey,
-        gameConfig.shootKey
+        ' ',
+        gameconfig.leftkey, 
+        gameconfig.rightkey, 
+        gameconfig.upkey,
+        gameconfig.downkey,
+        gameconfig.shootkey
     ];
     
-    // If the pressed key is used in the game, prevent default browser behavior
-    if (gameControlKeys.includes(event.key)) {
+    // stop browser from doing things with these keys
+    if (gamekeys.includes(event.key)) {
         event.preventDefault();
     }
     
-    // Only process game controls if the game is running
-    if (!gameRunning) return;
+    // only do stuff if game is running
+    if (!gameactive) return;
     
-    const moveStep = 10;
+    const movespeed = 10;
     
-    // Check which key was pressed
-    if (event.key === gameConfig.leftKey) {
-        // Move left
-        player.x = Math.max(0, player.x - moveStep);
-    } else if (event.key === gameConfig.rightKey) {
-        // Move right
-        player.x = Math.min(GAME_WIDTH - PLAYER_WIDTH, player.x + moveStep);
-    } else if (event.key === gameConfig.upKey) {
-        // Move up (restricted to bottom 40% of screen)
-        // Calculate the boundary line (60% from top)
-        const upperBoundary = GAME_HEIGHT - PLAYER_AREA_HEIGHT;
-        // Ensure the player doesn't move above the boundary
-        player.y = Math.max(upperBoundary, player.y - moveStep);
-    } else if (event.key === gameConfig.downKey) {
-        // Move down (but not off the bottom of the screen)
-        player.y = Math.min(GAME_HEIGHT - PLAYER_HEIGHT - 20, player.y + moveStep);
-    } else if (event.key === gameConfig.shootKey) {
-        // Shoot
-        playerShoot();
+    // movement controls
+    if (event.key === gameconfig.leftkey) {
+        // go left
+        player.x = Math.max(0, player.x - movespeed);
+    } else if (event.key === gameconfig.rightkey) {
+        // go right
+        player.x = Math.min(gamewidth - playerwidth, player.x + movespeed);
+    } else if (event.key === gameconfig.upkey) {
+        // go up
+        const topline = gameheight - playerareaheight;
+        // don't go above boundary
+        player.y = Math.max(topline, player.y - movespeed);
+    } else if (event.key === gameconfig.downkey) {
+        // go down
+        player.y = Math.min(gameheight - playerheight - 20, player.y + movespeed);
+    } else if (event.key === gameconfig.shootkey) {
+        // shoot
+        playershoot();
     }
     
-    // Update player position
+    // update player on screen
     player.element.style.left = `${player.x}px`;
     player.element.style.top = `${player.y}px`;
 });
-// Initialize the game
-function initGame() {
-    // Reset game state
-    clearGameElements();
-    
-    // Reset game variables
+
+// start the game
+function startgame() {
+    cleargame();
     score = 0;
     lives = 3;
-    playerBullets = [];
-    enemyBullets = [];
-    gameRunning = true;
-    enemyMoveDirection = 1;
-    enemyMoveSpeed = ENEMY_MOVE_SPEED_INITIAL;
-    speedMultiplier = 1;
-    scoreSaved = false;
+    playerbullets = [];
+    enemybullets = [];
+    gameactive = true;
+    enemydir = 1;
+    enemyspeed = badguyspeedfirst;
+    speedup = 1;
+    scoresaved = false;
     
-    // Make sure player element exists
-    let playerElement = document.getElementById('player');
-    if (!playerElement) {
-        playerElement = document.createElement('div');
-        playerElement.id = 'player';
-        gameArea.appendChild(playerElement);
+    let playerelement = document.getElementById('player');
+    if (!playerelement) {
+        playerelement = document.createElement('div');
+        playerelement.id = 'player';
+        gamebox.appendChild(playerelement);
     }
     
-    // Reset the game timer with the configured duration
-    gameConfig.timeRemaining = gameConfig.gameDuration * 60;
+    gameconfig.timeleft = gameconfig.gamelength * 60;
     
-    // Set up player
     player = {
-        x: (GAME_WIDTH - PLAYER_WIDTH) / 2,
-        y: GAME_HEIGHT - PLAYER_HEIGHT - 20,
-        width: PLAYER_WIDTH,
-        height: PLAYER_HEIGHT,
-        element: playerElement
+        x: (gamewidth - playerwidth) / 2,
+        y: gameheight - playerheight - 20,
+        width: playerwidth,
+        height: playerheight,
+        element: playerelement
     };
     
-    // Make sure the player element has proper styling
-    playerElement.style.width = `${PLAYER_WIDTH}px`;
-    playerElement.style.height = `${PLAYER_HEIGHT}px`;
-    playerElement.style.position = 'absolute';
-    playerElement.style.backgroundImage = "url('photos/pacman.png')";
-    playerElement.style.backgroundSize = 'contain';
-    playerElement.style.backgroundRepeat = 'no-repeat';
-    playerElement.style.backgroundPosition = 'center';
-    playerElement.style.zIndex = "10"; // Make sure player is on top
+    playerelement.style.width = `${playerwidth}px`;
+    playerelement.style.height = `${playerheight}px`;
+    playerelement.style.position = 'absolute';
+    playerelement.style.backgroundImage = "url('photos/pacman.png')";
+    playerelement.style.backgroundSize = 'contain';
+    playerelement.style.backgroundRepeat = 'no-repeat';
+    playerelement.style.backgroundPosition = 'center';
+    playerelement.style.zIndex = "10"; 
 
-    // Update player position
+    // player position on screen
     player.element.style.left = `${player.x}px`;
     player.element.style.top = `${player.y}px`;
 
-    // Create enemies
-    createEnemies();
+    // create enemies
+    makeenemies();
+    updatescreen();
+    
+    gameoverbox.classList.add('hidden');
+    gamewinbox.classList.add('hidden');
+    
+    
+    addnewgamebutton();
 
-    // Update UI
-    updateHUD();
+    makeboundary();
     
-    // Hide game over and win screens
-    gameOverElement.classList.add('hidden');
-    gameWinElement.classList.add('hidden');
+    // start game timers
+    if (gameloop) clearInterval(gameloop);
+    if (speeduploop) clearInterval(speeduploop);
     
-    // Add the new game button
-    addNewGameButton();
+    gameloop = setInterval(update, 1000 / 60); 
+    speeduploop = setInterval(makefaster, 5000);
     
-    // Create the boundary indicator
-    createBoundaryIndicator();
-    
-    // Start game loop
-    if (gameInterval) clearInterval(gameInterval);
-    if (speedIncreaseInterval) clearInterval(speedIncreaseInterval);
-    
-    gameInterval = setInterval(gameLoop, 1000 / 60); // 60 FPS
-    speedIncreaseInterval = setInterval(increaseSpeed, 5000); // Every 5 seconds
-    
-    // Start background music if enabled
-    playBackgroundMusic();
-    
-    // Start the game timer with the fresh duration
-    startGameTimer();
+    playmusic();
+    starttimer();
 }
 
-// Function to update the game's HUD (heads-up display)
-function updateHUD() {
-    // Update score
-    scoreElement.textContent = score;
-    
-    // Update lives with hearts
-    livesElement.innerHTML = '';
+// update score and lives
+function updatescreen() {
+    scorebox.textContent = score;
+    livesbox.innerHTML = '';
     for (let i = 0; i < lives; i++) {
         const heart = document.createElement('span');
         heart.className = 'heart-icon';
-        livesElement.appendChild(heart);
+        livesbox.appendChild(heart);
     }
 }
 
-// Clear game elements
-function clearGameElements() {
-    // Clear all bullets
+// clean up game stuff
+function cleargame() {
     document.querySelectorAll('.bullet, .enemy-bullet, .enemy').forEach(el => el.remove());
-    
-    // Remove any existing timer elements
     document.querySelectorAll('.timer').forEach(timer => timer.remove());
-    
-    // Reset arrays
-    playerBullets = [];
-    enemyBullets = [];
+
+    playerbullets = [];
+    enemybullets = [];
     enemies = [];
 }
 
-// Create enemy spaceships
-function createEnemies() {
-    // Calculate the total width of the enemies' grid
-    const totalEnemyWidth = ENEMY_COLS * (ENEMY_WIDTH + ENEMY_PADDING) - ENEMY_PADDING;
+// make enemies
+function makeenemies() {
+    const totalenemywidth = enemycols * (enemywidth + enemyspace) - enemyspace;
     
-    // Calculate the starting X position for the first enemy to center them in the game area
-    const startX = (GAME_WIDTH - totalEnemyWidth) / 2;
+    const startx = (gamewidth - totalenemywidth) / 2;
 
-    // Loop through each row and column to create enemies
-    for (let row = 0; row < ENEMY_ROWS; row++) {
-        for (let col = 0; col < ENEMY_COLS; col++) {
-            // Create a div element for each enemy
+    for (let row = 0; row < enemyrows; row++) {
+        for (let col = 0; col < enemycols; col++) {
+            
             const enemy = document.createElement('div');
-            enemy.className = 'enemy'; // Add the 'enemy' class for styling
-            gameArea.appendChild(enemy); // Add the enemy element to the game area
+            enemy.className = 'enemy'; 
+            gamebox.appendChild(enemy);
 
-            // Calculate the X and Y positions for the enemy
-            const x = startX + col * (ENEMY_WIDTH + ENEMY_PADDING);
-            const y = ENEMY_TOP_MARGIN + row * (ENEMY_HEIGHT + ENEMY_PADDING);
+            // figure out where to put the enemy
+            const x = startx + col * (enemywidth + enemyspace);
+            const y = enemytop + row * (enemyheight + enemyspace);
 
-            // Set the enemy's position and background image
+            // set up the enemy
             enemy.style.left = `${x}px`;
             enemy.style.top = `${y}px`;
-            enemy.style.backgroundImage = `url('${enemyImages[row]}')`; // Assign image based on row
-            enemy.style.backgroundSize = 'contain'; // Ensure the image fits the enemy element
-            enemy.style.backgroundRepeat = 'no-repeat'; // Prevent image repetition
-            enemy.style.backgroundPosition = 'center'; // Center the image inside the enemy div
-            enemy.style.width = `${ENEMY_WIDTH}px`;
-            enemy.style.height = `${ENEMY_HEIGHT}px`;
+            enemy.style.backgroundImage = `url('${enemyimages[row]}')`; // use image based on row
+            enemy.style.backgroundSize = 'contain'; 
+            enemy.style.backgroundRepeat = 'no-repeat'; 
+            enemy.style.backgroundPosition = 'center'; 
+            enemy.style.width = `${enemywidth}px`;
+            enemy.style.height = `${enemyheight}px`;
             enemy.style.position = 'absolute';
 
-            // Push the newly created enemy into the enemies array
+            // add enemy to our list
             enemies.push({
                 x: x,
                 y: y,
-                width: ENEMY_WIDTH,
-                height: ENEMY_HEIGHT,
+                width: enemywidth,
+                height: enemyheight,
                 element: enemy,
-                row: row // Store the row to determine the points awarded when destroyed
+                row: row // remember row for points when killed
             });
         }
     }
 }
 
-// Game loop
-function gameLoop() {
-    if (!gameRunning) return;
+// main game loop
+function update() {
+    if (!gameactive) return;
 
-    // Move enemies
-    moveEnemies();
+    // move all the things
+    moveenemies();
+    moveplayerbullets();
+    moveenemybullets();
 
-    // Move bullets
-    movePlayerBullets();
-    moveEnemyBullets();
+    // random enemy shooting
+    tryenemyshoot();
 
-    // Random enemy shooting
-    tryEnemyShooting();
+    // check if things hit each other
+    checkhits();
 
-    // Check collisions
-    checkCollisions();
-
-    // Check if all enemies are destroyed
+    // check if all enemies are dead
     if (enemies.length === 0) {
-        gameWin();
+        wingame();
     }
 }
 
-// Move the enemies
-function moveEnemies() {
-    let reachedEdge = false;
+// move the enemies
+function moveenemies() {
+    let hitedge = false;
     
-    // Check if any enemy reached the edge
+    // check if any enemy reached the edge
     for (const enemy of enemies) {
         if (
-            (enemyMoveDirection === 1 && enemy.x + ENEMY_WIDTH >= GAME_WIDTH) ||
-            (enemyMoveDirection === -1 && enemy.x <= 0)
+            (enemydir === 1 && enemy.x + enemywidth >= gamewidth) ||
+            (enemydir === -1 && enemy.x <= 0)
         ) {
-            reachedEdge = true;
+            hitedge = true;
             break;
         }
     }
     
-    // Change direction if reached edge
-    if (reachedEdge) {
-        enemyMoveDirection *= -1;
+    // change direction if hit edge
+    if (hitedge) {
+        enemydir *= -1;
     }
     
-    // Move all enemies
+    // move all enemies
     for (const enemy of enemies) {
-        enemy.x += enemyMoveDirection * enemyMoveSpeed * speedMultiplier;
+        enemy.x += enemydir * enemyspeed * speedup;
         enemy.element.style.left = `${enemy.x}px`;
     }
 }
 
-// Move player bullets
-function movePlayerBullets() {
-    for (let i = playerBullets.length - 1; i >= 0; i--) {
-        const bullet = playerBullets[i];
-        bullet.y -= 5; // Bullet speed
+// move player bullets
+function moveplayerbullets() {
+    for (let i = playerbullets.length - 1; i >= 0; i--) {
+        const bullet = playerbullets[i];
+        bullet.y -= 5; // bullet speed
         bullet.element.style.top = `${bullet.y}px`;
         
-        // Remove bullet if it goes out of bounds
-        if (bullet.y + BULLET_HEIGHT < 0) {
+        // remove bullet if it goes off screen
+        if (bullet.y + bulletheight < 0) {
             bullet.element.remove();
-            playerBullets.splice(i, 1);
+            playerbullets.splice(i, 1);
         }
     }
 }
 
-// Move enemy bullets
-function moveEnemyBullets() {
-    for (let i = enemyBullets.length - 1; i >= 0; i--) {
-        const bullet = enemyBullets[i];
-        bullet.y += 4 * speedMultiplier;
+// move enemy bullets
+function moveenemybullets() {
+    for (let i = enemybullets.length - 1; i >= 0; i--) {
+        const bullet = enemybullets[i];
+        bullet.y += 4 * speedup;
         bullet.element.style.top = `${bullet.y}px`;
 
-        // Check if bullet passed 75% of screen height
-        if (bullet.y > GAME_HEIGHT * 0.75) {
-            canEnemyShoot = true;
+        // check if bullet went down 75% of screen
+        if (bullet.y > gameheight * 0.75) {
+            enemycanshoot = true;
         }
 
-        // Remove bullet if it goes out of bounds
-        if (bullet.y > GAME_HEIGHT) {
+        // remove bullet if it goes off screen
+        if (bullet.y > gameheight) {
             bullet.element.remove();
-            enemyBullets.splice(i, 1);
+            enemybullets.splice(i, 1);
         }
     }
 }
 
-// Try enemy shooting based on requirements
-function tryEnemyShooting() {
-    if (!canEnemyShoot || enemies.length === 0) return;
+// try to make an enemy shoot
+function tryenemyshoot() {
+    if (!enemycanshoot || enemies.length === 0) return;
     
-    // If there are no enemy bullets, allow shooting
-    if (enemyBullets.length === 0) {
-        // Select a random enemy to shoot
-        const randomIndex = Math.floor(Math.random() * enemies.length);
-        const shootingEnemy = enemies[randomIndex];
+    // if no bullets, let an enemy shoot
+    if (enemybullets.length === 0) {
+        // pick random enemy
+        const randomenemy = Math.floor(Math.random() * enemies.length);
+        const shooter = enemies[randomenemy];
         
-        createEnemyBullet(shootingEnemy.x + ENEMY_WIDTH / 2 - BULLET_WIDTH / 2, shootingEnemy.y + ENEMY_HEIGHT);
+        makeenemybullet(shooter.x + enemywidth / 2 - bulletwidth / 2, shooter.y + enemyheight);
         
-        // Set flag to prevent continuous shooting
-        canEnemyShoot = false;
+        // stop shooting for now
+        enemycanshoot = false;
     } 
-    // Check if all bullets have traveled 3/4 of the screen
-    else if (enemyBullets.every(bullet => bullet.y > (GAME_HEIGHT * 0.75))) {
-        // Select a random enemy to shoot
-        const randomIndex = Math.floor(Math.random() * enemies.length);
-        const shootingEnemy = enemies[randomIndex];
+    // check if all bullets are far down the screen
+    else if (enemybullets.every(bullet => bullet.y > (gameheight * 0.75))) {
+        // pick random enemy
+        const randomenemy = Math.floor(Math.random() * enemies.length);
+        const shooter = enemies[randomenemy];
         
-        createEnemyBullet(shootingEnemy.x + ENEMY_WIDTH / 2 - BULLET_WIDTH / 2, shootingEnemy.y + ENEMY_HEIGHT);
+        makeenemybullet(shooter.x + enemywidth / 2 - bulletwidth / 2, shooter.y + enemyheight);
         
-        // Reset flag to prevent continuous shooting
-        canEnemyShoot = false;
+        // stop shooting for now
+        enemycanshoot = false;
     }
 }
 
-// Create enemy bullet
-function createEnemyBullet(x, y) {
+// make an enemy bullet
+function makeenemybullet(x, y) {
     const bullet = document.createElement('div');
     bullet.className = 'enemy-bullet';
-    bullet.style.width = `${BULLET_WIDTH}px`;
-    bullet.style.height = `${BULLET_HEIGHT}px`;
+    bullet.style.width = `${bulletwidth}px`;
+    bullet.style.height = `${bulletheight}px`;
     bullet.style.position = 'absolute';
     bullet.style.backgroundColor = 'red';
-    gameArea.appendChild(bullet);
+    gamebox.appendChild(bullet);
     
     bullet.style.left = `${x}px`;
     bullet.style.top = `${y}px`;
     
-    enemyBullets.push({
+    enemybullets.push({
         x: x,
         y: y,
-        width: BULLET_WIDTH,
-        height: BULLET_HEIGHT,
+        width: bulletwidth,
+        height: bulletheight,
         element: bullet
     });
 }
 
-// Player shooting
-function playerShoot() {
+// player shooting
+function playershoot() {
     const bullet = document.createElement('div');
     bullet.className = 'bullet';
-    bullet.style.width = `${BULLET_WIDTH}px`;
-    bullet.style.height = `${BULLET_HEIGHT}px`;
+    bullet.style.width = `${bulletwidth}px`;
+    bullet.style.height = `${bulletheight}px`;
     bullet.style.position = 'absolute';
     
-    // Apply custom bullet color from game configuration
-    bullet.style.backgroundColor = gameConfig.bulletColor;
+    // use bullet color from settings
+    bullet.style.backgroundColor = gameconfig.bulletcolor;
     
-    gameArea.appendChild(bullet);
+    gamebox.appendChild(bullet);
     
-    const bulletX = player.x + PLAYER_WIDTH / 2 - BULLET_WIDTH / 2;
-    const bulletY = player.y;
+    const bulletx = player.x + playerwidth / 2 - bulletwidth / 2;
+    const bullety = player.y;
     
-    bullet.style.left = `${bulletX}px`;
-    bullet.style.top = `${bulletY}px`;
+    bullet.style.left = `${bulletx}px`;
+    bullet.style.top = `${bullety}px`;
     
-    playerBullets.push({
-        x: bulletX,
-        y: bulletY,
-        width: BULLET_WIDTH,
-        height: BULLET_HEIGHT,
+    playerbullets.push({
+        x: bulletx,
+        y: bullety,
+        width: bulletwidth,
+        height: bulletheight,
         element: bullet
     });
 }
 
-// Check all collisions
-function checkCollisions() {
-    // Check player bullets hitting enemies
-    for (let i = playerBullets.length - 1; i >= 0; i--) {
-        const bullet = playerBullets[i];
+// check all hits
+function checkhits() {
+    // check player bullets hitting enemies
+    for (let i = playerbullets.length - 1; i >= 0; i--) {
+        const bullet = playerbullets[i];
         
         for (let j = enemies.length - 1; j >= 0; j--) {
             const enemy = enemies[j];
             
-            if (isColliding(bullet, enemy)) {
-                // Play player hit sound effect
-                playSoundEffect('playerHit');
+            if (ishitting(bullet, enemy)) {
+                // play sound
+                playsound('playerhit');
                 
-                // Calculate score based on enemy row
+                // figure out points based on row
                 let points;
                 switch (enemy.row) {
-                    case 0: points = 20; break; // Top row
+                    case 0: points = 20; break; // top row
                     case 1: points = 15; break;
                     case 2: points = 10; break;
-                    case 3: points = 5; break;  // Bottom row
+                    case 3: points = 5; break;  // bottom row
                     default: points = 5;
                 }
                 
-                // Update score
+                // add score
                 score += points;
-                updateHUD();
+                updatescreen();
                 
-                // Remove enemy
+                // remove enemy
                 enemy.element.remove();
                 enemies.splice(j, 1);
                 
-                // Remove bullet
+                // remove bullet
                 bullet.element.remove();
-                playerBullets.splice(i, 1);
+                playerbullets.splice(i, 1);
                 break;
             }
         }
     }
     
-    // Check enemy bullets hitting player
-    for (let i = enemyBullets.length - 1; i >= 0; i--) {
-        const bullet = enemyBullets[i];
+    // check enemy bullets hitting player
+    for (let i = enemybullets.length - 1; i >= 0; i--) {
+        const bullet = enemybullets[i];
         
-        if (isColliding(bullet, player)) {
-            // Play enemy hit sound effect
-            playSoundEffect('enemyHit');
+        if (ishitting(bullet, player)) {
+            // play sound
+            playsound('enemyhit');
             
-            // Player hit
+            // player got hit
             lives--;
-            updateHUD();
+            updatescreen();
             
-            // Remove bullet
+            // remove bullet
             bullet.element.remove();
-            enemyBullets.splice(i, 1);
+            enemybullets.splice(i, 1);
             
-            // Reset player to center position instead of random
-            player.x = (GAME_WIDTH - PLAYER_WIDTH) / 2; // Center horizontally
+            // move player back to center
+            player.x = (gamewidth - playerwidth) / 2; // center position
             player.element.style.left = `${player.x}px`;
             
-            // Check game over
+            // check if dead
             if (lives <= 0) {
-                gameOver("lives");
+                endgame("lives");
             }
             
             break;
         }
     }
     
-    // Check if all enemies are destroyed
+    // check if all enemies are gone
     if (enemies.length === 0) {
-        gameWin();
+        wingame();
     }
 }
 
-// Collision detection
-function isColliding(obj1, obj2) {
+// check if two things are hitting each other
+function ishitting(thing1, thing2) {
     return (
-        obj1.x < obj2.x + obj2.width &&
-        obj1.x + obj1.width > obj2.x &&
-        obj1.y < obj2.y + obj2.height &&
-        obj1.y + obj1.height > obj2.y
+        thing1.x < thing2.x + thing2.width &&
+        thing1.x + thing1.width > thing2.x &&
+        thing1.y < thing2.y + thing2.height &&
+        thing1.y + thing1.height > thing2.y
     );
 }
 
-// Increase enemy speed
-function increaseSpeed() {
-    if (speedMultiplier < MAX_SPEED_MULTIPLIER) {
-        speedMultiplier += 1;
+// make bad guys faster
+function makefaster() {
+    if (speedup < maxspeed) {
+        speedup += 1;
     }
 }
 
-// Game timer functions
-function startGameTimer() {
-    // Clear any existing timer
-    if (gameConfig.timer) {
-        clearInterval(gameConfig.timer);
+// game timer stuff
+function starttimer() {
+    // clear old timer
+    if (gameconfig.timer) {
+        clearInterval(gameconfig.timer);
     }
     
-    // Remove any existing timer elements to prevent duplication
-    const existingTimers = document.querySelectorAll('.timer');
-    existingTimers.forEach(timer => timer.remove());
+    // remove old timer display
+    const oldtimers = document.querySelectorAll('.timer');
+    oldtimers.forEach(timer => timer.remove());
     
-    // Add timer element to game info
-    const timerElement = document.createElement('div');
-    timerElement.className = 'timer';
-    timerElement.innerHTML = 'Time: <span id="time-remaining">0:00</span>';
-    document.querySelector('.game-info').appendChild(timerElement);
+    // add timer to screen
+    const timerbox = document.createElement('div');
+    timerbox.className = 'timer';
+    timerbox.innerHTML = 'Time: <span id="time-remaining">0:00</span>';
+    document.querySelector('.game-info').appendChild(timerbox);
     
-    // Ensure we're using the correct time value from game configuration
-    if (!gameConfig.timeRemaining || gameConfig.timeRemaining <= 0) {
-        gameConfig.timeRemaining = gameConfig.gameDuration * 60;
+    // make sure we have correct time
+    if (!gameconfig.timeleft || gameconfig.timeleft <= 0) {
+        gameconfig.timeleft = gameconfig.gamelength * 60;
     }
     
-    // Update timer display
-    updateTimerDisplay();
+    // show time
+    updatetimer();
     
-    // Start the timer
-    gameConfig.timer = setInterval(function() {
-        gameConfig.timeRemaining--;
-        updateTimerDisplay();
+    // start counting down
+    gameconfig.timer = setInterval(function() {
+        gameconfig.timeleft--;
+        updatetimer();
         
-        // Check if time has run out
-        if (gameConfig.timeRemaining <= 0) {
-            clearInterval(gameConfig.timer);
-            handleTimeOut();
+        // check if time ran out
+        if (gameconfig.timeleft <= 0) {
+            clearInterval(gameconfig.timer);
+            timeout();
         }
     }, 1000);
 }
 
-// Update the timer display
-function updateTimerDisplay() {
-    const minutes = Math.floor(gameConfig.timeRemaining / 60);
-    const seconds = gameConfig.timeRemaining % 60;
-    const timeStr = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    document.getElementById('time-remaining').textContent = timeStr;
+// update timer display
+function updatetimer() {
+    const mins = Math.floor(gameconfig.timeleft / 60);
+    const secs = gameconfig.timeleft % 60;
+    const timetext = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    document.getElementById('time-remaining').textContent = timetext;
 }
 
-// Handle game timeout
-function handleTimeOut() {
-    gameOver("timeout");
+// handle time running out
+function timeout() {
+    endgame("timeout");
 }
 
-// Game over function
-function gameOver(reason = "lives") {
-    stopCurrentGame(true); // true means save the score
+// game over
+function endgame(reason = "lives") {
+    stopgame(true); // true = save score
     
-    // Set appropriate game over message
-    const gameOverTitle = document.getElementById('game-over-title');
+    // set right message
+    const endtitle = document.getElementById('game-over-title');
     
-    // Determine how the game ended
-    let gameResult = "";
+    // figure out how game ended
+    let gameresult = "";
     
     if (reason === "lives" || lives <= 0) {
-        gameOverTitle.textContent = "You Lost!";
-        gameResult = "Defeated";
+        endtitle.textContent = "You Lost!";
+        gameresult = "Defeated";
     } else if (reason === "timeout") {
         if (score < 100) {
-            gameOverTitle.textContent = "You can do better";
-            gameResult = "Time's up";
+            endtitle.textContent = "You can do better";
+            gameresult = "Time's up";
         } else {
-            gameOverTitle.textContent = "Winner!";
-            gameResult = "Victory";
+            endtitle.textContent = "Winner!";
+            gameresult = "Victory";
         }
     }
     
-    // Update final score and rank display
+    // show final score and rank
     document.getElementById('final-score').textContent = score;
-    document.getElementById('player-rank').textContent = getRank(score);
+    document.getElementById('player-rank').textContent = getrank(score);
     
-    // Display high scores table
-    document.getElementById('high-scores-table').innerHTML = displayHighScoresTable();
+    // show high scores
+    document.getElementById('high-scores-table').innerHTML = showhighscores();
     
-    // Show game over screen
-    gameOverElement.classList.remove('hidden');
+    // show game over screen
+    gameoverbox.classList.remove('hidden');
 }
 
-// Game win function
-function gameWin() {
-    stopCurrentGame(true); // true means save the score
+// win game
+function wingame() {
+    stopgame(true); // true = save score
     
-    // Set win message
+    // set win message
     document.getElementById('game-win-title').textContent = "Champion!";
     
-    // Update win score and rank display
+    // show win score and rank
     document.getElementById('win-score').textContent = score;
-    document.getElementById('player-win-rank').textContent = getRank(score);
+    document.getElementById('player-win-rank').textContent = getrank(score);
     
-    // Display high scores table
-    document.getElementById('win-high-scores-table').innerHTML = displayHighScoresTable();
+    // show high scores
+    document.getElementById('win-high-scores-table').innerHTML = showhighscores();
     
-    // Show game win screen
-    gameWinElement.classList.remove('hidden');
+    // show win screen
+    gamewinbox.classList.remove('hidden');
 }
 
-// Create boundary indicator for player movement
-function createBoundaryIndicator() {
-    // First, remove any existing boundary indicator
-    const existingIndicator = document.getElementById('player-boundary');
-    if (existingIndicator) {
-        existingIndicator.remove();
+// make boundary line for player area
+function makeboundary() {
+    // remove old boundary line
+    const oldboundary = document.getElementById('player-boundary');
+    if (oldboundary) {
+        oldboundary.remove();
     }
     
-    // Create a new boundary indicator element
-    const boundaryIndicator = document.createElement('div');
-    boundaryIndicator.id = 'player-boundary';
+    // make new boundary line
+    const boundary = document.createElement('div');
+    boundary.id = 'player-boundary';
     
-    // Set styles for the boundary line
-    boundaryIndicator.style.position = 'absolute';
-    boundaryIndicator.style.left = '0';
-    boundaryIndicator.style.width = '100%';
-    boundaryIndicator.style.height = '2px';
-    boundaryIndicator.style.backgroundColor = 'rgba(249, 228, 46, 0.3)'; // Subtle yellow line
+    // make it look right
+    boundary.style.position = 'absolute';
+    boundary.style.left = '0';
+    boundary.style.width = '100%';
+    boundary.style.height = '2px';
+    boundary.style.backgroundColor = 'rgba(249, 228, 46, 0.3)'; // yellow line
     
-    // Position at 60% from the top (where the player area begins)
-    const boundaryPosition = GAME_HEIGHT - PLAYER_AREA_HEIGHT;
-    boundaryIndicator.style.top = `${boundaryPosition}px`;
+    // put it in right place (60% down)
+    const boundarypos = gameheight - playerareaheight;
+    boundary.style.top = `${boundarypos}px`;
     
-    // Add to game area
-    gameArea.appendChild(boundaryIndicator);
+    // add to game
+    gamebox.appendChild(boundary);
 }
 
-// Add new game button during gameplay
-function addNewGameButton() {
-    // Check if button already exists
+// add new game button during play
+function addnewgamebutton() {
+    // check if button exists
     if (document.getElementById('new-game-button-ingame')) {
         return;
     }
     
-    // Create the button
-    const newGameButton = document.createElement('button');
-    newGameButton.id = 'new-game-button-ingame';
-    newGameButton.className = 'ingame-button';
-    newGameButton.textContent = 'New Game';
+    // make button
+    const newgamebtn = document.createElement('button');
+    newgamebtn.id = 'new-game-button-ingame';
+    newgamebtn.className = 'ingame-button';
+    newgamebtn.textContent = 'New Game';
     
-    // Add event listener for the button
-    newGameButton.addEventListener('click', function() {
-        // Confirm the user wants to start a new game
+    // add click handler
+    newgamebtn.addEventListener('click', function() {
+        // make sure player wants to quit
         if (confirm('Are you sure? your score will not be saved')) {
-            // Stop the current game
-            stopCurrentGame(false); // false means don't save the score
+            // stop game
+            stopgame(false); // false = don't save score
             
-            // Return to the configuration screen
-            initGame();
+            // go back to setup screen
+            startgame();
         }
     });
     
-    // Find a good place to add the button (next to the game info)
-    const gameInfo = document.querySelector('.game-info');
-    gameInfo.appendChild(newGameButton);
+    // add button near game info
+    const gameinfo = document.querySelector('.game-info');
+    gameinfo.appendChild(newgamebtn);
 }
 
-// Stop the current game
-function stopCurrentGame(saveScore = true) {
-    gameRunning = false;
+// stop current game
+function stopgame(savescore = true) {
+    gameactive = false;
     
-    // Clear intervals
-    if (gameInterval) clearInterval(gameInterval);
-    if (speedIncreaseInterval) clearInterval(speedIncreaseInterval);
+    // stop all timers
+    if (gameloop) clearInterval(gameloop);
+    if (speeduploop) clearInterval(speeduploop);
     
-    // Stop background music
-    stopBackgroundMusic();
+    // stop music
+    stopmusic();
     
-    // Clear the timer
-    if (gameConfig.timer) clearInterval(gameConfig.timer);
+    // stop timer
+    if (gameconfig.timer) clearInterval(gameconfig.timer);
     
-    // Save the score if requested and not already saved
-    if (saveScore && !scoreSaved) {
-        scoreSaved = true;
+    // save score if needed and not already saved
+    if (savescore && !scoresaved) {
+        scoresaved = true;
         
-        // Determine game result based on current state
-        let gameResult = "";
+        // figure out how game ended
+        let gameresult = "";
         
         if (lives <= 0) {
-            gameResult = "Defeated";
+            gameresult = "Defeated";
         } else if (enemies.length === 0) {
-            gameResult = "Champion";
+            gameresult = "Champion";
         } else {
-            gameResult = "Quit";
+            gameresult = "Quit";
         }
         
-        // Save high score
-        saveHighScore(score, gameResult);
+        // save high score
+        savehighscore(score, gameresult);
     }
 }

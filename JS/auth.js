@@ -1,10 +1,10 @@
-// dictionary of users
+// list of users
 const users = {
     "p": "testuser"
 };
 
-// clearing all form values
-function clearRegistrationForm() {
+// clear form inputs
+function clearform() {
     document.getElementById("username").value = "";
     document.getElementById("password").value = "";
     document.getElementById("confirmPassword").value = "";
@@ -12,121 +12,121 @@ function clearRegistrationForm() {
     document.getElementById("lastName").value = "";
     document.getElementById("email").value = "";
 
-    // clear BD
+    // reset birthday
     document.getElementById("birthYear").selectedIndex = 0;
     document.getElementById("birthMonth").selectedIndex = 0;
-    populateDays();
+    updatedays();
     document.getElementById("birthDay").selectedIndex = 0;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // validate login cardentials 
+    // check login info
     document.getElementById("loginForm").addEventListener("submit", function(event) {
         event.preventDefault();
         const username = document.getElementById("loginUsername").value;
         const password = document.getElementById("loginPassword").value;
 
         if (users.hasOwnProperty(username) && users[username] === password) {
-            setCurrentPlayer(username);
-            clearPreviousPlayerScores();
+            setplayer(username);
+            clearscores();
             setTimeout(() => {
-                showScreen("configScreen");
+                showscreen("configScreen");
                 if (typeof loginMsg !== "undefined") {
                     loginMsg.remove();
                 }
             }, 500);
         } else {
-            alert("שם משתמש או סיסמה שגויים, נסה שוב.");
+            alert("Wrong username or password, try again.");
         }
     });
 
     document.getElementById("registerSubmitButton").addEventListener("click", function () {
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value;
-        const confirmPassword = document.getElementById("confirmPassword").value;
+        const confirmpass = document.getElementById("confirmPassword").value;
         const email = document.getElementById("email").value.trim();
-        const firstName = document.getElementById("firstName").value.trim();
-        const lastName = document.getElementById("lastName").value.trim();
-        const birthYear = document.getElementById("birthYear").value;
-        const birthMonth = document.getElementById("birthMonth").value;
-        const birthDay = document.getElementById("birthDay").value;
+        const firstname = document.getElementById("firstName").value.trim();
+        const lastname = document.getElementById("lastName").value.trim();
+        const birthyear = document.getElementById("birthYear").value;
+        const birthmonth = document.getElementById("birthMonth").value;
+        const birthday = document.getElementById("birthDay").value;
 
-        // regex
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
-        const nameRegex = /^[A-Za-z\u0590-\u05FF\s'-]+$/;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // check patterns
+        const passcheck = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+        const namecheck = /^[A-Za-z\u0590-\u05FF\s'-]+$/;
+        const emailcheck = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        if (!firstName || !lastName || !email || !username || !password || !confirmPassword || !birthYear || !birthMonth || !birthDay) {
-            alert("אנא מלא את כל השדות לפני ההרשמה.");
+        if (!firstname || !lastname || !email || !username || !password || !confirmpass || !birthyear || !birthmonth || !birthday) {
+            alert("Please fill in all fields before registering.");
             return;
         }
 
-        if (!emailRegex.test(email)) {
-            alert("כתובת אימייל לא חוקית.");
+        if (!emailcheck.test(email)) {
+            alert("Invalid email address.");
             return;
         }
 
-        if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) {
-            alert("שם פרטי ושם משפחה חייבים להכיל רק אותיות.");
+        if (!namecheck.test(firstname) || !namecheck.test(lastname)) {
+            alert("First and last name must contain only letters.");
             return;
         }
 
-        if (!passwordRegex.test(password)) {
-            alert("הסיסמה חייבת להכיל לפחות 8 תווים, לפחות אות אחת ולפחות ספרה אחת.");
+        if (!passcheck.test(password)) {
+            alert("Password must contain at least 8 characters, at least one letter and one number.");
             return;
         }
 
-        if (password !== confirmPassword) {
-            alert("הסיסמאות אינן תואמות.");
+        if (password !== confirmpass) {
+            alert("Passwords do not match.");
             return;
         }
 
         if (users[username]) {
-            alert("שם המשתמש כבר קיים במערכת.");
+            alert("Username already exists in the system.");
             return;
         }
 
         users[username] = password;
-        alert("נרשמת בהצלחה! כעת תוכל להתחבר.");
-        showScreen("loginScreen");
+        alert("Registration successful! You can now log in.");
+        showscreen("loginScreen");
     });
 
-    const yearSelect = document.getElementById('birthYear');
-    const monthSelect = document.getElementById('birthMonth');
-    const daySelect = document.getElementById('birthDay');
-    const currentYear = new Date().getFullYear();
+    const yearbox = document.getElementById('birthYear');
+    const monthbox = document.getElementById('birthMonth');
+    const daybox = document.getElementById('birthDay');
+    const currentyear = new Date().getFullYear();
 
-    for (let i = currentYear; i >= 1950; i--) {
+    for (let i = currentyear; i >= 1950; i--) {
         let option = document.createElement("option");
         option.value = i;
         option.textContent = i;
-        yearSelect.appendChild(option);
+        yearbox.appendChild(option);
     }
 
     for (let i = 1; i <= 12; i++) {
         let option = document.createElement("option");
         option.value = i;
         option.textContent = i < 10 ? `0${i}` : i;
-        monthSelect.appendChild(option);
+        monthbox.appendChild(option);
     }
 
-    populateDays();
+    updatedays();
 
-    monthSelect.addEventListener('change', populateDays);
-    yearSelect.addEventListener('change', populateDays);
-    const toggleButtons = document.querySelectorAll('.toggle-password');
+    monthbox.addEventListener('change', updatedays);
+    yearbox.addEventListener('change', updatedays);
+    const togglebtns = document.querySelectorAll('.toggle-password');
 
-    toggleButtons.forEach(button => {
+    togglebtns.forEach(button => {
         button.addEventListener('click', function() {
-            const passwordInput = this.parentElement.querySelector('input');
+            const passinput = this.parentElement.querySelector('input');
             
-            // Toggle the type attribute
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
+            // switch input type
+            if (passinput.type === 'password') {
+                passinput.type = 'text';
                 this.textContent = '🔒'; 
                 this.title = 'Hide password';
             } else {
-                passwordInput.type = 'password';
+                passinput.type = 'password';
                 this.textContent = '👁️'; 
                 this.title = 'Show password';
             }
@@ -134,21 +134,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function populateDays() {
-    const monthSelect = document.getElementById('birthMonth');
-    const yearSelect = document.getElementById('birthYear');
-    const daySelect = document.getElementById('birthDay');
+function updatedays() {
+    const monthbox = document.getElementById('birthMonth');
+    const yearbox = document.getElementById('birthYear');
+    const daybox = document.getElementById('birthDay');
     
-    const month = monthSelect.value;
-    const year = yearSelect.value;
+    const month = monthbox.value;
+    const year = yearbox.value;
 
-    const daysInMonth = new Date(year, month, 0).getDate();
-    daySelect.innerHTML = '';
+    const daysinmonth = new Date(year, month, 0).getDate();
+    daybox.innerHTML = '';
 
-    for (let i = 1; i <= daysInMonth; i++) {
+    for (let i = 1; i <= daysinmonth; i++) {
         let option = document.createElement("option");
         option.value = i;
         option.textContent = i < 10 ? `0${i}` : i;
-        daySelect.appendChild(option);
+        daybox.appendChild(option);
     }
 }
