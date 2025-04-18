@@ -403,3 +403,82 @@ input[type="range"]::-moz-range-thumb {
         margin-top: 5px;
     }
 }
+
+If you want to add the responsive CSS to an existing file, I recommend adding it to your mainStyle.css file since it already contains some responsive design rules.
+Here's exactly what you should copy and paste at the end of your mainStyle.css file:
+css/* Responsive CSS for Chrome compatibility and minimum resolution of 1366x768 */
+
+/* Base responsive requirements */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 1366px; /* Minimum width requirement */
+  min-height: 768px; /* Minimum height requirement */
+  overflow-x: auto; /* Allow horizontal scrolling if viewport is smaller than min width */
+}
+
+/* Chrome-specific optimizations */
+@supports (-webkit-appearance:none) {
+  /* Hardware acceleration for better performance in Chrome */
+  #game-area, .screen, #player, .enemy {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Media query for screens at or above minimum resolution */
+@media screen and (min-width: 1366px) and (min-height: 768px) {
+  /* Game container centering for larger screens */
+  .container {
+    position: relative;
+    margin: 20px auto;
+  }
+  
+  /* Center the game better on larger screens */
+  #game-area {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Media query for screens below minimum resolution */
+@media screen and (max-width: 1365px), screen and (max-height: 767px) {
+  /* Notification for screens below minimum requirements */
+  body::before {
+    content: "For the best experience, please use a screen with resolution of at least 1366x768";
+    display: block;
+    padding: 10px;
+    background-color: rgba(249, 228, 46, 0.2);
+    color: #333;
+    text-align: center;
+    font-weight: bold;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  
+  /* Add margin to prevent content being hidden under the notification */
+  body {
+    padding-top: 40px;
+  }
+}
+
+/* Fix responsive issues in game screens */
+#gameScreen {
+  min-height: 600px; /* Ensure game screen has sufficient height */
+}
+
+/* Ensure proper gameplay area spacing */
+.game-container {
+  min-height: 500px;
+}
+
+/* Make sure modal windows are properly centered and visible */
+.about-modal-content, #game-over, #game-win {
+  max-height: 80vh;
+  overflow-y: auto;
+}
