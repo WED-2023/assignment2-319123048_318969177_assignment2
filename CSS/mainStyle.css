@@ -404,9 +404,8 @@ input[type="range"]::-moz-range-thumb {
     }
 }
 
-If you want to add the responsive CSS to an existing file, I recommend adding it to your mainStyle.css file since it already contains some responsive design rules.
-Here's exactly what you should copy and paste at the end of your mainStyle.css file:
-css/* Responsive CSS for Chrome compatibility and minimum resolution of 1366x768 */
+
+/* Responsive CSS for Chrome compatibility and minimum resolution of 1366x768 */
 
 /* Base responsive requirements */
 html, body {
