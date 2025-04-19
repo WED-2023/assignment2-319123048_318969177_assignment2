@@ -56,6 +56,11 @@ p {
     color: white;
 }
 
+h3 {
+    font-size: 20px;
+    color: white;
+}
+
 /* Links */
 a {
     color: #f9e42e;
