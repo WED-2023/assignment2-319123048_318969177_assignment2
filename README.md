@@ -1,9 +1,9 @@
 # My Pac-Man Game: #
 
 **Submitters:**  
-Noa Patchornik 319123048
+Noa Patchornik - 319123048
 
-Yaki Naftali 318969177
+Yaki Naftali - 318969177
 
 
 **Link to the Game:**
