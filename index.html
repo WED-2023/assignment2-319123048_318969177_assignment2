@@ -19,6 +19,8 @@
 
     <!-- Container for all screens -->
     <div class="container">
+        <!-- button of the about modal -->
+        <button id="openAboutBtn">About</button>
         <!-- Welcome Page -->
         <div id="welcomeScreen" class="screen welcome-container">
             <div class="logo-section">
@@ -260,12 +262,12 @@
 </div>
         </div>
     </div>
-    <button id="openAboutBtn">About</button>
+    
 
     <!--About Modal screen-->
-<div id="aboutModal" class="about-modal">
-    <div class="about-modal-content">
-        <span class="about-close">&times;</span>
+<div id="aboutModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
         <h2>About the Project</h2>
         
         <div class="submitter-info">
@@ -307,25 +309,31 @@
 <!--Footer-->
 <footer class="site-footer">
     <div class="footer-container">
-        <div class="footer-section contact-info">
-            <h3> Contact info</h3>
-            <p><strong>mail:</strong> noapatch@post.bgu.ac.il</p>
-            <p><strong>phone:</strong> 050-9308-770</p>
-            <p><strong>link to git: 
-                <a href="https://github.com/WED-2023/assignment2-319123048_318969177_assignment2" target="_blank">
-                    https://github.com/WED-2023/assignment2-319123048_318969177_assignment2
-                </a>
-            </strong> </p>
-        </div>
-        <div class="footer-section about-site">
-            <p>A game inspired by PAC-MAN. For more information press on the about button</p>
-            <p>Version: 1.0.0</p>
-        </div>
-        <div class="footer-section copyright">
-            <p>© 2025 All rights reserved to Noa Patchornik and Yaki Naftali</p>
-        </div>
+      <div class="footer-logo">
+        <img src="photos/logo.png" alt="PacWorld Logo" />
+      </div>
+      <div class="footer-center">
+        <p>© 2025 PacWorld. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#" id="contactLink">Contact</a>
+        <a href="#" id="aboutButton">About</a>
+      </div>
     </div>
-</footer>
+  </footer>
+
+<!-- Contact Modal -->
+<div id="contactModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+      <h2>Contact Us</h2>
+      <p>Email: noapatch@post.bgu.ac.il  </p>
+      <p>Phone: +972 509-308-770</p>
+      <p>Link to GitHub: <a href="https://github.com/WED-2023/assignment2-319123048_318969177_assignment2">
+        https://github.com/WED-2023/assignment2-319123048_318969177_assignment2</a> </p>
+    </div>
+  </div>
+
 <script src="JS/audio.js"></script>
 <script src="JS/navigation.js"></script>
 <script src="JS/auth.js"></script>
