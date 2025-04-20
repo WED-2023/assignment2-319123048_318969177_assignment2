@@ -206,7 +206,7 @@ input, select {
 /* modal screens */
 #openAboutBtn {
     position: absolute;
-    top: 90px;
+    top: 52px;
     right: 2px;
     z-index: 1001;
     background-color: #f9e42e;

@@ -1,3 +1,5 @@
+// This JS file handle all the functions for aduio in the game
+
 // sound files
 const sounds = {
     backgroundmusic: new Audio('sounds/background_music.mp3'),

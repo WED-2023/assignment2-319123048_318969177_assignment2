@@ -1,3 +1,5 @@
+//This JS file handle the authentication funcrions, when a user register 
+
 // list of users
 const users = {
     "p": "testuser"

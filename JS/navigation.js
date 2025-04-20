@@ -1,3 +1,6 @@
+// This JS file handle all screens and navigation from one another, making sure that in any time there is only one screen showing,
+// making the navigation smoother
+
 // hide all screens
 function hideallscreens() {
     document.querySelectorAll('.screen').forEach(function(screen) {

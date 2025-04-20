@@ -1,3 +1,6 @@
+// This JS file handle all the game functions from start to end including the score table and using the configuration that the user
+// choose for the game, handling the movments, shooting, music (if needed), keeping the top-bar updated
+
 // game started flag
 let gameinit = false;
 let scoresaved = false;

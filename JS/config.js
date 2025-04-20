@@ -1,3 +1,5 @@
+// This JS file handle the configuration screen and to keep them after the user is choosing
+
 let gameconfig = {
     leftkey: "ArrowLeft", 
     rightkey: "ArrowRight", 

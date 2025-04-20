@@ -1,3 +1,5 @@
+// This JS file handle the score and save it for the user in a score table in local storage
+
 let currentplayer = null;
 
 // save player name
