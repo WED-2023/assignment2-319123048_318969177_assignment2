@@ -1,11 +1,11 @@
-/* General reset */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Body styles */
+/* body */
 body {
     display: flex;
     flex-direction: column;
@@ -14,14 +14,14 @@ body {
     min-height: 100vh;
 }
 
-/* Main container */
+/* main */
 .container {
     width: 100%;
-    max-width: 600px; /* Match GAME_WIDTH */
+    max-width: 600px;
     margin: 20px auto;
 }
 
-/* Screen handling */
+/* screen */
 .screen {
     display: none;
 }
@@ -44,7 +44,7 @@ nav a:hover {
     text-decoration: underline;
 }
 
-/* Typography */
+/* text */
 h1 {
     font-size: 24px;
     margin-bottom: 10px;
@@ -67,7 +67,7 @@ a {
     text-decoration: none;
 }
 
-/* All dark containers (shared styles) */
+/* style for containers */
 .welcome-container, 
 .registration-container, 
 .login-container,
@@ -83,16 +83,16 @@ a {
 }
 
 #welcomeScreen a {
-    color: #1a73e8; /* classic blue */
+    color: #1a73e8; 
     text-decoration: underline;
-    word-break: break-all; /* breaks long URLs nicely */
+    word-break: break-all;
 }
 
 #welcomeScreen a:hover {
     color: #0c50a3;
 }
  
-/* Footer style */
+/* Footer */
 .site-footer {
     background-color: black;
     color: #ffffff;
@@ -137,7 +137,7 @@ a {
   
 
 
-/* Logo section */
+/* Logo */
 .logo-section {
     margin-bottom: 10px;
     text-align: center;
@@ -151,13 +151,13 @@ a {
     margin-bottom: 20px;
 }
 
-/* Button section */
+/* Button */
 .button-section {
     display: flex;
     justify-content: space-around;
 }
 
-/* All buttons (shared styles) */
+/* All buttons */
 .button,
 button,
 .toggle-password {
@@ -203,7 +203,7 @@ input, select {
     font-size: 16px;
 }
 
-/* About modal and Contact Us modal */
+/* modal screens */
 #openAboutBtn {
     position: absolute;
     top: 90px;
@@ -279,7 +279,7 @@ input, select {
     border-top: 1px solid #eee;
 }
 
-/* Configuration form */
+/* Configuration */
 .config-form {
     max-width: 600px;
     margin: 0 auto;
@@ -299,7 +299,7 @@ input, select {
     border-radius: 5px;
 }
 
-/* Toggle switch */
+/* toggles */
 .toggle-container {
     display: flex;
     align-items: center;
@@ -450,78 +450,53 @@ input[type="range"]::-moz-range-thumb {
 }
 
 
-/* Responsive CSS for Chrome compatibility and minimum resolution of 1366x768 */
+/* Chrome compatibility and minimum resolution of 1366x768 */
 
-/* Base responsive requirements */
+/* responsive requirements */
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  min-width: 1366px; /* Minimum width requirement */
-  min-height: 768px; /* Minimum height requirement */
-  overflow-x: auto; /* Allow horizontal scrolling if viewport is smaller than min width */
+  min-width: 1366px; 
+  min-height: 768px; 
+  overflow-x: auto; 
 }
 
-/* Chrome-specific optimizations */
+/* Chrome requierment */
 @supports (-webkit-appearance:none) {
-  /* Hardware acceleration for better performance in Chrome */
-  #game-area, .screen, #player, .enemy {
+    #game-area, .screen, #player, .enemy {
     transform: translateZ(0);
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
   }
 }
 
-/* Media query for screens at or above minimum resolution */
+/* Center the game */
 @media screen and (min-width: 1366px) and (min-height: 768px) {
-  /* Game container centering for larger screens */
   .container {
     position: relative;
     margin: 20px auto;
   }
   
-  /* Center the game better on larger screens */
+  
   #game-area {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   }
 }
 
-/* Media query for screens below minimum resolution */
-@media screen and (max-width: 1365px), screen and (max-height: 767px) {
-  /* Notification for screens below minimum requirements */
-  body::before {
-    content: "For the best experience, please use a screen with resolution of at least 1366x768";
-    display: block;
-    padding: 10px;
-    background-color: rgba(249, 228, 46, 0.2);
-    color: #333;
-    text-align: center;
-    font-weight: bold;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-  }
-  
-  /* Add margin to prevent content being hidden under the notification */
-  body {
-    padding-top: 40px;
-  }
-}
 
-/* Fix responsive issues in game screens */
+/* responsive game screens */
 #gameScreen {
-  min-height: 600px; /* Ensure game screen has sufficient height */
+  min-height: 600px; 
 }
 
-/* Ensure proper gameplay area spacing */
+/* gameplay area spacing */
 .game-container {
   min-height: 500px;
 }
 
-/* Make sure modal windows are properly centered and visible */
+/* modal screens centered */
 .about-modal-content, #game-over, #game-win {
   max-height: 80vh;
   overflow-y: auto;

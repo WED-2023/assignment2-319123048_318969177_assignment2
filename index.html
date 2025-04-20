@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="CSS/gameStyle.css">
 </head>
 <body>
-    <!-- Navigation Menu -->
+    <!-- Navigation menue -->
     <nav>
         <a href="javascript:void(0);" id="goToWelcome">Welcome</a>
         <a href="javascript:void(0);" id="goToLogin">Login</a>
@@ -17,11 +17,10 @@
     
     </nav>
 
-    <!-- Container for all screens -->
+    <!-- all screens -->
     <div class="container">
-        <!-- button of the about modal -->
         <button id="openAboutBtn">About</button>
-        <!-- Welcome Page -->
+        <!-- Welcome screen -->
         <div id="welcomeScreen" class="screen welcome-container">
             <div class="logo-section">
                 <img src="photos/logo.png" alt="Logo" class="logo">
@@ -42,7 +41,7 @@
             </div>
         </div>
 
-        <!-- Registration Form -->
+        <!-- Registration screen -->
         <div id="registrationScreen" class="screen registration-container">
             <h1>Registration</h1>
             <form id="registrationForm">
@@ -98,7 +97,7 @@
             <p>Already have an account? <a href="javascript:void(0);" id="toLogin">Login here</a></p>
         </div>
 
-        <!-- Login Form -->
+        <!-- Login screen -->
         <div id="loginScreen" class="screen login-container">
             <h1>Login</h1>
             <form id="loginForm">
@@ -120,13 +119,12 @@
 <div id="configScreen" class="screen config-container">
     <h1>Game Configuration</h1>
     <div class="config-form">
-        <!-- Movement Keys -->
+        <!-- moving Keys -->
         <h2>Controls</h2>
         <div class="form-group">
             <label for="leftKey">Move Left Key:</label>
             <select id="leftKey" name="leftKey">
                 <option value="ArrowLeft" selected>Arrow Left</option>
-                <!-- Letter keys will be populated by JavaScript -->
             </select>
         </div>
 
@@ -134,7 +132,6 @@
             <label for="rightKey">Move Right Key:</label>
             <select id="rightKey" name="rightKey">
                 <option value="ArrowRight" selected>Arrow Right</option>
-                <!-- Letter keys will be populated by JavaScript -->
             </select>
         </div>
 
@@ -142,7 +139,6 @@
             <label for="upKey">Move Up Key:</label>
             <select id="upKey" name="upKey">
                 <option value="ArrowUp" selected>Arrow Up</option>
-                <!-- Letter keys will be populated by JavaScript -->
             </select>
         </div>
 
@@ -150,7 +146,6 @@
             <label for="downKey">Move Down Key:</label>
             <select id="downKey" name="downKey">
                 <option value="ArrowDown" selected>Arrow Down</option>
-                <!-- Letter keys will be populated by JavaScript -->
             </select>
         </div>
 
@@ -159,7 +154,6 @@
             <label for="shootKey">Shooting Key:</label>
             <select id="shootKey" name="shootKey">
                 <option value=" " selected>Spacebar</option>
-                <!-- Letter keys will be populated by JavaScript -->
             </select>
         </div>
         
@@ -229,9 +223,9 @@
         </div>
         <div id="game-area">
             <div id="player"></div>
-        <!-- Enemy ships will be created by JavaScript -->
+        <!-- Enemy ghosts will be created by JavaScript -->
         </div>
-        <!-- Enhanced Game Over Screen -->
+        <!-- Game Over Screen -->
 <div id="game-over" class="hidden">
     <h2 id="game-over-title">Game Over</h2>
     <p>Your final score: <span id="final-score">0</span></p>
@@ -246,7 +240,7 @@
     </div>
 </div>
 
-<!-- Enhanced Game Win Screen -->
+<!-- Game Win Screen -->
 <div id="game-win" class="hidden">
     <h2 id="game-win-title">Champion!</h2>
     <p>Your final score: <span id="win-score">0</span></p>
@@ -348,6 +342,5 @@
 <script src="JS/config.js"></script>
 <script src="JS/game.js"></script>
 <script src="JS/modal.js"></script>
-<!-- <script src="JS/main.js"></script> -->
 </body>
 </html>
