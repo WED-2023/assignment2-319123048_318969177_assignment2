@@ -1,9 +1,9 @@
 # My Pac-Man Game: #
 
 **Submitters:**  
-Noa Patchornik - 319123048
-
 Yaki Naftali - 318969177
+
+Noa Patchornik - 319123048
 
 
 **Link to the Game:**
@@ -12,7 +12,7 @@ Yaki Naftali - 318969177
 
 ## Over View
 
-The game combines the Pac-Man theme with classic shooting mechanics. The player controls Pac-Man using the keyboard and shoots bullets to defeat enemy ghosts.
+This website is a game combines the Pac-Man theme with classic shooting game. The player controls Pac-Man using the keyboard and shoots bullets to defeat enemy ghosts.
 
 ## Features
 **Registration and Login** - A system that stores players and scores using localStorage.
