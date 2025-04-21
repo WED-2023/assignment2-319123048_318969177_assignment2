@@ -48,8 +48,12 @@ function gethighscores() {
 
 // clear scores for new login
 function clearscores() {
-    // just don't load them - keep in storage for when player logs in again
+    const prevplayer = getplayer();
+    if (prevplayer) {
+        localStorage.removeItem(`highscores_${prevplayer}`);
+    }
 }
+
 
 // get score rank
 function getrank(score) {
